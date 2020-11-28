@@ -19,6 +19,7 @@ export default class Firebase {
         .collection('user')
         .doc(user.uid)
         .set({role, email, name});
+
       return user;
     } catch (error) {
       return 'error';
@@ -35,7 +36,7 @@ export default class Firebase {
 
       return dbUser;
     } catch (error) {
-      return error;
+      return 'error';
     }
   };
 }

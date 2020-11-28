@@ -13,13 +13,33 @@ import {withFirebase} from '../../config/firebase/firebaseContext';
 import {InputText, Gap, Link, Button} from '../../components';
 
 function login({navigation, firebase}) {
-  const [Email, setEmail] = useState('');
-  const [Password, setPassword] = useState('');
+  const [Email, setEmail] = useState(null);
+  const [Password, setPassword] = useState(null);
+  const [Error, setError] = useState('');
   const dispatch = useDispatch();
+
+  const loginFunc = async () => {
+    if (Email == null || Password == null) {
+      setError('Please Fill Username & Password');
+    } else {
+      try {
+        const authStatus = await firebase.doAuthLoginUser(Email, Password);
+        const myRole = authStatus;
+        if (!myRole.exists) {
+          setError('Username of Password is incorrect');
+        } else {
+          dispatch({type: 'LOGINADMINUSER', payload: myRole.data().role});
+        }
+      } catch (error) {
+        setError(error);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
+        <Text style={styles.textError}>{Error} </Text>
         <Gap height={15} />
         <InputText
           type="username"
@@ -39,7 +59,7 @@ function login({navigation, firebase}) {
           prior="primary"
           title="Login"
           width={250}
-          onpress={() => dispatch({type: 'LOGINADMINUSER', payload: 'admin'})}
+          onpress={() => loginFunc()}
         />
 
         <Gap height={15} />
@@ -75,5 +95,8 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     borderWidth: 0.2,
     borderRadius: 10,
+  },
+  textError: {
+    color: 'red',
   },
 });
