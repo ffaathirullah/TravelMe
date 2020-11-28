@@ -10,10 +10,15 @@ const mainColors = {
   blue4: '#0D2C54',
   yellow1: '#FFB400',
   red1: '#F6511D',
+  white: '#fff',
 };
 
 export default {
   primary: mainColors.blue1,
   secondary: mainColors.green1,
+  success: mainColors.green1,
+  danger: mainColors.red1,
+  warning: mainColors.yellow1,
   dark1: mainColors.dark1,
+  light: mainColors.white,
 };

@@ -1,11 +1,41 @@
-import React from 'react';
-import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Button as Tombol,
+} from 'react-native';
+
+import {withFirebase} from '../../config/firebase/firebaseContext';
 
 import {InputText, Gap, Link, Button} from '../../components';
 
-export default function login({navigation}) {
+function login({navigation, firebase}) {
   return (
     <View style={styles.container}>
+      <Tombol
+        title="regis"
+        onPress={() =>
+          firebase
+            .doAuthCreateNewUser(
+              'test1@gmail.com',
+              '1234678',
+              'admin',
+              'namaadmin',
+            )
+            .then((a) => console.log(a))
+        }
+      />
+      <Tombol
+        title="login"
+        onPress={() =>
+          firebase
+            .doAuthLoginUser('test1@gmail.com', '1234678')
+            .then((a) => console.log(a.data()))
+        }
+      />
+
       <View style={styles.formContainer}>
         <Gap height={15} />
         <InputText type="username" placeholder="username" iconName="user" />
@@ -37,6 +67,8 @@ export default function login({navigation}) {
     </View>
   );
 }
+
+export default withFirebase(login);
 
 const styles = StyleSheet.create({
   container: {

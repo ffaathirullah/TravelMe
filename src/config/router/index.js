@@ -2,13 +2,15 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
+import {withFirebase} from '../firebase/firebaseContext';
+
 import auth from './auth';
 import mainAdmin from './mainAdmin';
 import mainUser from './mainUser';
 
 const Stack = createStackNavigator();
 
-export default function index() {
+function index() {
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode="none">
@@ -19,3 +21,5 @@ export default function index() {
     </NavigationContainer>
   );
 }
+
+export default withFirebase(index);
