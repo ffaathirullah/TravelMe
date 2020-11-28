@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -6,47 +6,40 @@ import {
   View,
   Button as Tombol,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {withFirebase} from '../../config/firebase/firebaseContext';
 
 import {InputText, Gap, Link, Button} from '../../components';
 
 function login({navigation, firebase}) {
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.container}>
-      <Tombol
-        title="regis"
-        onPress={() =>
-          firebase
-            .doAuthCreateNewUser(
-              'test1@gmail.com',
-              '1234678',
-              'admin',
-              'namaadmin',
-            )
-            .then((a) => console.log(a))
-        }
-      />
-      <Tombol
-        title="login"
-        onPress={() =>
-          firebase
-            .doAuthLoginUser('test1@gmail.com', '1234678')
-            .then((a) => console.log(a.data()))
-        }
-      />
-
       <View style={styles.formContainer}>
         <Gap height={15} />
-        <InputText type="username" placeholder="username" iconName="user" />
+        <InputText
+          type="username"
+          placeholder="username"
+          iconName="user"
+          onChangeText={(mail) => setEmail(mail)}
+        />
         <Gap height={15} />
-        <InputText type="password" placeholder="password" iconName="lock" />
+        <InputText
+          type="password"
+          placeholder="password"
+          iconName="lock"
+          onChangeText={(pass) => setPassword(pass)}
+        />
         <Gap height={15} />
         <Button
           prior="primary"
           title="Login"
           width={250}
-          onpress={() => navigation.navigate('user')}
+          onpress={() => dispatch({type: 'LOGINADMINUSER', payload: 'admin'})}
         />
 
         <Gap height={15} />
@@ -61,7 +54,7 @@ function login({navigation, firebase}) {
           prior="secondary"
           title="Register"
           width={150}
-          onpress={() => navigation.navigate('user')}
+          onpress={() => navigation.push('register')}
         />
       </View>
     </View>

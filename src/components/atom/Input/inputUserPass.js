@@ -10,7 +10,12 @@ import PropTypes from 'prop-types';
 
 import Icon from 'react-native-vector-icons/Feather';
 
-export default function inputUserPass({iconName, placeholder, type}) {
+export default function inputUserPass({
+  iconName,
+  placeholder,
+  type,
+  onChangeText,
+}) {
   const [Visible, setVisible] = useState(false);
 
   return (
@@ -20,6 +25,7 @@ export default function inputUserPass({iconName, placeholder, type}) {
         placeholder={placeholder}
         secureTextEntry={type === 'password' && !Visible}
         style={styles.inputStyle}
+        onChangeText={(a) => onChangeText(a)}
       />
       {type == 'password' && (
         <TouchableOpacity
