@@ -17,7 +17,10 @@ function login({navigation, firebase}) {
       setError('Please Fill Username & Password');
     } else {
       try {
-        const authStatus = await firebase.doAuthLoginUser(Email, Password);
+        const authStatus = await firebase.doAuthLoginUser(
+          Email.trim(),
+          Password,
+        );
         const myRole = authStatus;
         if (!myRole.exists) {
           setError('Username of Password is incorrect');
