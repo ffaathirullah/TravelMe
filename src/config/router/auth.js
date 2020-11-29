@@ -10,8 +10,8 @@ const Auth = createStackNavigator();
 export default function auth() {
   return (
     <Auth.Navigator headerMode="none">
-      <Auth.Screen name="login" component={login} />
       <Auth.Screen name="register" component={register} />
+      <Auth.Screen name="login" component={login} />
       <Auth.Screen name="forgot" component={forgot} />
     </Auth.Navigator>
   );

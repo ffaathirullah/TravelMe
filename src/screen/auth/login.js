@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  View,
-  Button as Tombol,
-} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 import {withFirebase} from '../../config/firebase/firebaseContext';
 
@@ -40,7 +34,7 @@ function login({navigation, firebase}) {
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.textError}>{Error} </Text>
-        <Gap height={15} />
+        {/* <Gap height={15} /> */}
         <InputText
           type="username"
           placeholder="username"

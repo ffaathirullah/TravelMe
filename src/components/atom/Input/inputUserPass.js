@@ -15,6 +15,7 @@ export default function inputUserPass({
   placeholder,
   type,
   onChangeText,
+  keyBoardType = 'default',
 }) {
   const [Visible, setVisible] = useState(false);
 
@@ -25,6 +26,8 @@ export default function inputUserPass({
         placeholder={placeholder}
         secureTextEntry={type === 'password' && !Visible}
         style={styles.inputStyle}
+        autoCapitalize="none"
+        keyboardType={keyBoardType}
         onChangeText={(a) => onChangeText(a)}
       />
       {type == 'password' && (
@@ -39,7 +42,7 @@ export default function inputUserPass({
 }
 
 inputUserPass.propTypes = {
-  type: PropTypes.oneOf(['username', 'password']),
+  type: PropTypes.oneOf(['text', 'password']),
 };
 
 const styles = StyleSheet.create({

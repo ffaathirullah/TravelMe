@@ -14,7 +14,6 @@ const Stack = createStackNavigator();
 
 function index() {
   const myRole = useSelector((state) => state.authReducer.type);
-  const dispatch = useDispatch();
 
   // useEffect(() => {
 
