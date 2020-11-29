@@ -54,7 +54,13 @@ function register({navigation, firebase}) {
           Prov,
           City,
         )
-        .then((a) => console.log(a));
+        .then((a) => {
+          if (a == 'error') {
+            setError('The username already exists.');
+          } else {
+            navigation.popToTop();
+          }
+        });
     } else {
       setError('PLease fill the blank');
     }

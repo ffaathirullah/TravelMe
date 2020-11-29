@@ -49,7 +49,7 @@ export default class Firebase {
       }
       return user;
     } catch (error) {
-      return error;
+      return 'error';
     }
   };
 

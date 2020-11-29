@@ -4,7 +4,7 @@ import {StyleSheet, Text, View} from 'react-native';
 export default function home() {
   return (
     <View>
-      <Text></Text>
+      <Text>this is guid</Text>
     </View>
   );
 }

@@ -36,7 +36,7 @@ function login({navigation, firebase}) {
         <Text style={styles.textError}>{Error} </Text>
         {/* <Gap height={15} /> */}
         <InputText
-          type="username"
+          type="text"
           placeholder="username"
           iconName="user"
           onChangeText={(mail) => setEmail(mail)}
