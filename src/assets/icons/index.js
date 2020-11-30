@@ -6,6 +6,14 @@ import Icon_akun from './logo_profile.svg';
 import Icon_akun_aktif from './logo_profile_aktif.svg';
 import Icon_travelMe_home from './icon_travelMe_home.svg';
 import Icon_Search from './Search.svg';
+import Icon_Air_Terjun from './Air_Terjun.svg';
+import Icon_Gunung from './Gunung.svg';
+import Icon_Bukit from './Bukit.svg';
+import Icon_Danau from './Danau.svg';
+import Icon_Hutan_Raya from './Hutan_Raya.svg';
+import Icon_Museum from './Museum.svg';
+import Icon_Perkebunan from './Perkebunan.svg';
+import Icon_Peternakan from './Peternakan.svg';
 export {
   Icon_home,
   Icon_home_aktif,
@@ -14,5 +22,13 @@ export {
   Icon_pesanan,
   Icon_pesanan_aktif,
   Icon_travelMe_home,
-  Icon_Search
+  Icon_Search,
+  Icon_Air_Terjun,
+  Icon_Gunung,
+  Icon_Bukit,
+  Icon_Danau,
+  Icon_Hutan_Raya,
+  Icon_Museum,
+  Icon_Perkebunan,
+  Icon_Peternakan
 };
