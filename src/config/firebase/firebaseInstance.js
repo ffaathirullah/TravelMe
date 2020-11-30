@@ -9,7 +9,7 @@ export default class Firebase {
     this.auth = auth();
     this.role = null;
   }
-
+  //TODO please try and check //TODO please try and check //TODO please try and check
   doAuthCreateNewUser = async (
     name,
     email,
@@ -52,7 +52,7 @@ export default class Firebase {
       return 'error';
     }
   };
-
+  //TODO please try and check //TODO please try and check //TODO please try and check
   doAuthLoginUser = async (email, password) => {
     try {
       const {user} = await this.auth.signInWithEmailAndPassword(
@@ -65,5 +65,111 @@ export default class Firebase {
     } catch (error) {
       return 'error';
     }
+  };
+  //TODO please try and check //TODO please try and check //TODO please try and check
+  doListGetLocation = async (prov, city) => {
+    try {
+      const data = await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .get();
+
+      let list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+
+      return list;
+    } catch (error) {
+      return 'error';
+    }
+  };
+  //TODO please try and check //TODO please try and check //TODO please try and check
+  doUserGetGuideList = async (prov, city) => {
+    try {
+      const snapshot = await this.db
+        .collection('guide')
+        .doc(prov)
+        .collection(city)
+        .get();
+
+      if (snapshot.empty) {
+        return [];
+      }
+
+      let data = [];
+
+      snapshot.forEach((doc) => data.push(doc.data()));
+
+      return data;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  //! NOT YET  //! NOT YET  //! NOT YET  //! NOT YET
+  doGuideSendPlace = async (
+    prov,
+    city,
+    name,
+    desc,
+    price,
+    openTime,
+    closeTime,
+    lat,
+    lang,
+  ) => {
+    try {
+      await this.db
+        .collection('admin')
+        .doc('request')
+        .collection('place')
+        .add({prov, city, name, desc, price, openTime, closeTime, lat, lang});
+
+      return 'succeed';
+    } catch (error) {
+      return 'failed';
+    }
+  };
+
+  //TODO please try and check //TODO please try and check //TODO please try and check
+  doAdminGetRequest = async () => {
+    try {
+      const data = await this.db
+        .collection('admin')
+        .doc('request')
+        .collection('place')
+        .get();
+
+      let list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+
+      return list;
+    } catch (error) {
+      return 'error';
+    }
+  };
+  //TODO please try and check //TODO please try and check //TODO please try and check
+  doAdminShowVerifUser = async () => {
+    try {
+      const data = await this.db
+        .collection('admin')
+        .doc('request')
+        .collection('verifUser')
+        .get();
+
+      let list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+
+      return list;
+    } catch (error) {}
   };
 }
