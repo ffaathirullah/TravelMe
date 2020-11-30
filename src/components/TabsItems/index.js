@@ -22,7 +22,7 @@ const TabsItems = ({label, isFocused, onPress, onLongPress}) => {
     if (label === 'Profile') {
       return isFocused ? <Icon_akun_aktif /> : <Icon_akun />;
     }
-    return <icon_home />;
+    return <Icon_home />;
   };
   return (
     <TouchableOpacity
