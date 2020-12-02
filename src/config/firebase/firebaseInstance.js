@@ -135,7 +135,7 @@ export default class Firebase {
   };
 
   //TODO please try and check //TODO please try and check //TODO please try and check
-  doAdminGetRequest = async () => {
+  doAdminGetRequestLocation = async () => {
     try {
       const data = await this.db
         .collection('admin')
@@ -146,7 +146,7 @@ export default class Firebase {
       let list = [];
 
       data.forEach((doc) => {
-        list.push(doc.data());
+        list.push({id: doc.id, data: doc.data()});
       });
 
       return list;
@@ -171,5 +171,40 @@ export default class Firebase {
 
       return list;
     } catch (error) {}
+  };
+
+  doAdminActionVerifPlaceAccept = async (data, id) => {
+    try {
+      await this.db
+        .collection('place')
+        .doc(data.prov)
+        .collection(data.city)
+        .add(data);
+
+      await this.db
+        .collection('admin')
+        .doc('request')
+        .collection('place')
+        .doc(id)
+        .delete();
+
+      return 'sukses';
+    } catch (error) {
+      return error;
+    }
+  };
+
+  doAdminActionVerifPlaceReject = async (id) => {
+    try {
+      await this.db
+        .collection('admin')
+        .doc('request')
+        .collection('place')
+        .doc(id)
+        .delete();
+      return 'sukses';
+    } catch (error) {
+      return error;
+    }
   };
 }

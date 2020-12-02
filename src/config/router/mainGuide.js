@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import guideScreen from '../../screen/guide/home';
+import guideScreen from '../../screen/mainGuideguide/home';
 
 const Guide = createStackNavigator();
 
