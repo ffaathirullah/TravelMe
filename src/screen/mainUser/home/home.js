@@ -18,27 +18,23 @@ export default function home() {
       <View style={styles.bagianAtas}>
         <Icon_travelMe_home style={styles.logo}/>
         <Text style={styles.textTravelme}>TravelMe</Text>
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              height: 40,
-              width: 130,
-              borderRadius: 10,
-              backgroundColor: 'rgba(0,0,0,.1)',
-            }}>
-            <Image
-              source={require('../../../assets/png/iconLocation.png')}
-              style={{
-                height: 13,
-                width: 13,
-                resizeMode: 'cover',
-                marginHorizontal: 8,
-              }}
-      />
-    <Text>Text lokasi</Text>
+        <View style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            height: 40,
+            width: 130,
+            borderRadius: 10,
+            backgroundColor: 'rgba(0,0,0,.1)'
+          }}>
+          <Image source={require('../../../assets/png/iconLocation.png')} style={{
+              height: 13,
+              width: 13,
+              resizeMode: 'cover',
+              marginHorizontal: 8
+            }}/>
+          <Text>Text lokasi</Text>
+        </View>
       </View>
-            </View>
       <View styles={styles.search}>
         <TextInput placeholder="Cari Tempat Wisata, Cafe, dst" style={styles.txtInput}/>
         <Icon_Search style={styles.searchIcon}/>
@@ -77,8 +73,8 @@ export default function home() {
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
             <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
-              <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
-              <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
+            <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
+            <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
           </ScrollView>
         </View>
 
