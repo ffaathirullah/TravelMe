@@ -4,7 +4,7 @@ import {Gap} from '../../components/atom';
 
 export default function listDest() {
   return (
-    <View style={{backgroundColor: '#fff', flex: 1, paddingHorizontal: 20}}>
+    <View style={styles.container}>
       <Text style={{fontWeight: 'bold', fontSize: 20}}>
         Destinasi di daerah mu
       </Text>
@@ -49,4 +49,11 @@ export default function listDest() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+});
