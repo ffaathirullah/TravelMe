@@ -1,15 +1,18 @@
 import app from '@react-native-firebase/app';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import Axios from 'axios';
 
 export default class Firebase {
   constructor() {
     this.db = database();
     this.auth = auth();
+    this.storage = storage();
+    this.myAccout = auth().currentUser.uid;
     this.role = null;
   }
-  //TODO please try and check //TODO please try and check //TODO please try and check
+  //! AUTH //! AUTH //! AUTH //! AUTH //! AUTH
   doAuthCreateNewUser = async (
     name,
     email,
@@ -52,7 +55,7 @@ export default class Firebase {
       return 'error';
     }
   };
-  //TODO please try and check //TODO please try and check //TODO please try and check
+
   doAuthLoginUser = async (email, password) => {
     try {
       const {user} = await this.auth.signInWithEmailAndPassword(
@@ -66,50 +69,8 @@ export default class Firebase {
       return 'error';
     }
   };
-  //TODO please try and check //TODO please try and check //TODO please try and check
-  doListGetLocation = async (prov, city) => {
-    try {
-      const data = await this.db
-        .collection('place')
-        .doc(prov)
-        .collection(city)
-        .get();
 
-      let list = [];
-
-      data.forEach((doc) => {
-        list.push(doc.data());
-      });
-
-      return list;
-    } catch (error) {
-      return 'error';
-    }
-  };
-  //TODO please try and check //TODO please try and check //TODO please try and check
-  doUserGetGuideList = async (prov, city) => {
-    try {
-      const snapshot = await this.db
-        .collection('guide')
-        .doc(prov)
-        .collection(city)
-        .get();
-
-      if (snapshot.empty) {
-        return [];
-      }
-
-      let data = [];
-
-      snapshot.forEach((doc) => data.push(doc.data()));
-
-      return data;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  //! NOT YET  //! NOT YET  //! NOT YET  //! NOT YET
+  //! GUIDE //! GUIDE //! GUIDE //! GUIDE //! GUIDE
   doGuideSendPlace = async (
     prov,
     city,
@@ -134,7 +95,67 @@ export default class Firebase {
     }
   };
 
-  //TODO please try and check //TODO please try and check //TODO please try and check
+  doGuideAddPlaceWork = async (prov, city, idPlace, nameUser) => {
+    try {
+      await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idPlace)
+        .collection('listGuide')
+        .doc(this.myAccout)
+        .set({nameUser, uid: this.myAccout});
+
+      await this.db
+        .collection('user')
+        .doc(this.myAccout)
+        .collection('myPlace')
+        .doc(idPlace)
+        .set({status: 'enabled'});
+
+      return 'succeed';
+    } catch (error) {
+      return 'failed';
+    }
+  };
+  doGuideMinPlaceWork = async (prov, city, idPlace) => {
+    try {
+      await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idPlace)
+        .collection('listGuide')
+        .doc(this.myAccout)
+        .delete();
+
+      await this.db
+        .collection('user')
+        .doc(this.myAccout)
+        .collection('myPlace')
+        .doc(idPlace)
+        .delete();
+
+      return 'succeed';
+    } catch (error) {
+      return 'failed';
+    }
+  };
+
+  doGuideCountPlaceWork = async () => {
+    try {
+      const data = await this.db
+        .collection('user')
+        .doc(this.myAccout)
+        .collection('myPlace')
+        .get();
+
+      return data;
+    } catch (error) {}
+  };
+
+  //! ADMIN //! ADMIN //! ADMIN //! ADMIN //! ADMIN
+
   doAdminGetRequestLocation = async () => {
     try {
       const data = await this.db
@@ -154,7 +175,7 @@ export default class Firebase {
       return 'error';
     }
   };
-  //TODO please try and check //TODO please try and check //TODO please try and check
+
   doAdminShowVerifUser = async () => {
     try {
       const data = await this.db
@@ -205,6 +226,58 @@ export default class Firebase {
       return 'sukses';
     } catch (error) {
       return error;
+    }
+  };
+
+  //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV
+  doSettingChangePhoto = async (fileURI, newName, newContact) => {
+    try {
+      const ref = await this.storage.ref(`photo/${this.myAccout}/myPhoto.png`);
+      const send = await ref.put(fileURI);
+      const getFullPathImage = await this.storage
+        .ref(send.metadata.fullPath)
+        .getDownloadURL();
+
+      const updateDBUser = await this.db
+        .collection('user')
+        .doc(this.myAccout)
+        .update({
+          profileImage: getFullPathImage,
+          contact: newContact,
+          name: newName,
+        });
+
+      return 'sukses';
+    } catch (error) {
+      return error;
+    }
+  };
+
+  doGetCurrentUserInfo = async () => {
+    try {
+      const data = await this.db.collection('user').doc(this.myAccout).get();
+      return data.data();
+    } catch (error) {
+      return error;
+    }
+  };
+  doListGetLocation = async (prov, city) => {
+    try {
+      const data = await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .get();
+
+      let list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+
+      return list;
+    } catch (error) {
+      return 'error';
     }
   };
 }

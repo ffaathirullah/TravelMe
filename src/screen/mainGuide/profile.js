@@ -1,35 +1,44 @@
-import React from 'react';
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Image,
+} from 'react-native';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const {width, height} = Dimensions.get('window');
 
-export default function profile() {
+function profile({navigation, firebase}) {
+  const [Name, setName] = useState('');
+  const [Contact, setContact] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
+  const [Rating, setRating] = useState(null);
+
+  useEffect(() => {
+    firebase.doGetCurrentUserInfo().then((a) => {
+      setName(a.name);
+      setContact(a.contact);
+      setProfileImage(a.profileImage);
+    });
+  }, []);
+
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <View
-        style={{
-          height: 110,
-          width,
-          elevation: 3,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
         <Text style={{fontWeight: 'bold', fontSize: 24}}>Profile</Text>
-        <View
-          style={{
-            position: 'absolute',
-            top: 10,
-            right: 5,
-            height: 40,
-            width: 100,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-          }}>
-          <MaterialIcon size={24} name="settings" />
-          <MaterialIcon size={24} name="logout" />
+        <View style={styles.settingContainer}>
+          <TouchableOpacity onPress={() => navigation.push('setting')}>
+            <MaterialIcon size={24} name="settings" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <MaterialIcon size={24} name="logout" />
+          </TouchableOpacity>
         </View>
       </View>
       <View
@@ -47,17 +56,49 @@ export default function profile() {
           }}
         />
         <Gap height={7} />
-        <Text style={{color: '#767676', fontSize: 14}}>Role user</Text>
+        <Text style={{color: '#767676', fontSize: 14}}>Guide</Text>
         <Gap height={7} />
-        <Text style={{fontWeight: 'bold', fontSize: 16}}>Nama User</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>Raden Shohih</Text>
         <Gap height={7} />
-        <Text style={{fontSize: 14}}>asalcontact@mailnya.com</Text>
+        <Text style={{fontSize: 14}}>0811918948</Text>
         <Gap height={7} />
         <Text>Rating User</Text>
       </View>
       <Gap height={30} />
 
       <View style={{paddingHorizontal: 20}}>
+        <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+          Wilayah Kerja Saya
+        </Text>
+        <Gap height={15} />
+        <View
+          style={{
+            backgroundColor: '#fff',
+            left: 0,
+            right: 0,
+            height: 100,
+            paddingHorizontal: 7,
+            paddingVertical: 15,
+            elevation: 3,
+            marginVertical: 5,
+            borderRadius: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../../assets/png/blackScreen.jpg')}
+            style={{height: 60, width: 60}}
+          />
+          <View>
+            <Text></Text>
+            <Text></Text>
+          </View>
+        </View>
+      </View>
+
+      <Gap height={30} />
+
+      <View style={styles.reviewContainer}>
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>Review</Text>
         <Gap height={15} />
         <View
@@ -108,8 +149,30 @@ export default function profile() {
           </Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({});
+export default withFirebase(profile);
+
+const styles = StyleSheet.create({
+  container: {flex: 1, backgroundColor: '#fff'},
+  header: {
+    height: 110,
+    width,
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  reviewContainer: {paddingHorizontal: 20},
+  settingContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 5,
+    height: 40,
+    width: 100,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+});
