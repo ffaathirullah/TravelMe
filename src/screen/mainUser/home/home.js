@@ -12,7 +12,7 @@ import {
 import {Icon_travelMe_home, Icon_Search, Image_Air_Terjun, Image_Gunung} from '../../../assets';
 import {BottomIcon, Category} from '../../../components';
 
-export default function home() {
+export default function home({navigation, props}) {
   return (
     <ScrollView>
     <View style={styles.container}>
@@ -72,10 +72,18 @@ export default function home() {
             marginTop: 16
           }}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
+            <TouchableOpacity  onPress={() => navigation.navigate('listDetail')}>
+            <Category navigation={navigation} imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/ >
+            </TouchableOpacity>
+            <TouchableOpacity>
             <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
+            </TouchableOpacity>
+            <TouchableOpacity>
             <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
+            </TouchableOpacity>
+            <TouchableOpacity>
             <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
+            </TouchableOpacity>
           </ScrollView>
         </View>
 

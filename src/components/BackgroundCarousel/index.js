@@ -1,21 +1,19 @@
-import * as React from "react";
+import  React , {useState, createRef, useEffect  } from "react";
 import { StyleSheet, View, ScrollView, Dimensions, Image, TouchableOpacity } from "react-native";
 import {Icon_backstackManipulation} from '../../assets';
+import { useNavigation } from '@react-navigation/native';
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
-class BackgroundCarousel extends React.Component {
+function BackgroundCarousel (props) {
+
   scrollRef = React.createRef();
-  constructor(props) {
-    super(props);
+ const [state, setState] = useState({
+    selectedIndex: 0,
+    scrollRef : React.createRef()
+ });
 
-    this.state = {
-      selectedIndex: 0
-    };
-    this.scrollRef = React.createRef();
-  }
-
-  componentDidMount = () => {
+ componentDidMount = () => {
     setInterval(() => {
       this.setState(
         prev => ({
@@ -40,19 +38,19 @@ class BackgroundCarousel extends React.Component {
     const viewSize = event.nativeEvent.layoutMeasurement;
 
     const selectedIndex = Math.floor(contentOffset.x / viewSize.width);
-    this.setState({ selectedIndex });
+    setState({ selectedIndex });
   };
 
-  render() {
-    const { images } = this.props;
-    const { selectedIndex } = this.state;
+    const navigation = useNavigation();
+    const { images } = props;
+    const { selectedIndex } = state;
     return (
       <View style={{ height: "50%", width: "100%" }}>
         <ScrollView
           horizontal
           pagingEnabled
-          onMomentumScrollEnd={this.setSelectedIndex}
-          ref={this.scrollRef}
+          onMomentumScrollEnd={setSelectedIndex}
+          ref={scrollRef}
         >
           {images.map(image => (
             <Image
@@ -65,7 +63,7 @@ class BackgroundCarousel extends React.Component {
         <View style={styles.backstackView}>
           <View style={styles.circleBackstack}>
           </View>
-          <TouchableOpacity  style={styles.backStack} >
+          <TouchableOpacity  style={styles.backStack}   onPress={() => { navigation.navigate('Home')  } } >
             <Icon_backstackManipulation/>
           </TouchableOpacity>
         </View>
@@ -83,7 +81,6 @@ class BackgroundCarousel extends React.Component {
         </View>
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
 
   },
   backstackView:{
-    bottom: 240,
+    bottom: 270,
     left: 16
   }
 });
