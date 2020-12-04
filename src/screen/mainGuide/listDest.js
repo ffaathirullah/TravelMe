@@ -67,7 +67,7 @@ export default function listDest({navigation}) {
             flexDirection: 'row',
             flexWrap: 'wrap',
           }}>
-          {[...Array(20)].map((itemDUmmy, idx) => (
+          {[...Array(10)].map((itemDUmmy, idx) => (
             <View
               key={idx}
               style={{
