@@ -14,6 +14,8 @@ import Icon_Hutan_Raya from './Hutan_Raya.svg';
 import Icon_Museum from './Museum.svg';
 import Icon_Perkebunan from './Perkebunan.svg';
 import Icon_Peternakan from './Peternakan.svg';
+import Icon_backstackManipulation from './Icon_backstackManipulation.svg';
+
 export {
   Icon_home,
   Icon_home_aktif,
@@ -30,5 +32,6 @@ export {
   Icon_Hutan_Raya,
   Icon_Museum,
   Icon_Perkebunan,
-  Icon_Peternakan
+  Icon_Peternakan,
+  Icon_backstackManipulation
 };
