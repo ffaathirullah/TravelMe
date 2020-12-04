@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -13,13 +13,18 @@ import settingScreen from '../../screen/setting/settingScreen';
 
 const Stack = createStackNavigator();
 
-function index() {
+function index({firebase}) {
   const myRole = useSelector((state) => state.authReducer.type);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-
-  //   dispatch({type:'LOGINADMINUSER' , type  })
-  // }, [myRole])
+  useEffect(() => {
+    console.log(firebase.myAccout);
+    firebase
+      .doCheckRole()
+      .then((RoleUser) =>
+        dispatch({type: 'LOGINADMINUSER', payload: RoleUser}),
+      );
+  }, []);
 
   return (
     <NavigationContainer>
