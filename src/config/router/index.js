@@ -18,7 +18,6 @@ function index({firebase}) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(firebase.myAccout);
     firebase
       .doCheckRole()
       .then((RoleUser) =>

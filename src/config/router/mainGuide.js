@@ -4,7 +4,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
 
 import guideScreen from '../../screen/mainGuide/home';
-import listDest from '../../screen/mainGuide/listDest';
+import listFlow from './mainGuideDestListFlow';
 import profile from '../../screen/mainGuide/profile';
 
 const Guide = createBottomTabNavigator();
@@ -32,7 +32,7 @@ export default function mainGuide() {
             <FAIcon name="location-arrow" color={color} size={size} />
           ),
         }}
-        component={listDest}
+        component={listFlow}
       />
       <Guide.Screen
         name="profile"

@@ -1,79 +1,98 @@
 import {array} from 'prop-types';
 import React, {useEffect} from 'react';
-import {Image, TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 
+import NavIcon from '../../utils/navIcon';
 import {Gap} from '../../components/atom';
 
-export default function listDest() {
+const {width, height} = Dimensions.get('window');
+
+export default function listDest({navigation}) {
   useEffect(() => {}, []);
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={{fontWeight: 'bold', fontSize: 20}}>
         Destinasi di daerah mu
       </Text>
 
-      {[...Array(9)].map((a, idx) => (
-        <View key={idx} style={styles.itemListContainer}>
-          <Image
-            source={require('../../assets/png/blackScreen.jpg')}
-            style={{
-              height: 80,
-              width: 80,
-              marginHorizontal: 10,
-            }}
-          />
+      <Gap height={30} />
 
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              nama tempat tujuan
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-evenly',
+          alignContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 10,
+        }}>
+        {NavIcon.map((a, idx) => (
+          <TouchableOpacity
+            onPress={() => navigation.push('lists', {type: a.type})}
+            key={idx.toString()}
+            style={{
+              marginHorizontal: 7,
+              width: 70,
+              height: 65,
+              marginVertical: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image source={a.img} style={{height: 60, width: 60}} />
+            <Gap height={4} />
+            <Text adjustsFontSizeToFit numberOfLines={1}>
+              {a.name}
             </Text>
-            <Gap height={10} />
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <Gap height={30} />
+
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>
+          Rekomendasi Tempat
+        </Text>
+        <Gap height={10} />
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+          }}>
+          {[...Array(20)].map((itemDUmmy, idx) => (
+            <View
+              key={idx}
+              style={{
+                height: 200,
+                width: width / 2 - 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+                marginHorizontal: 10,
+                marginVertical: 10,
+                overflow: 'hidden',
+                borderRadius: 10,
+              }}>
               <Image
-                source={require('../../assets/png/iconClock.png')}
-                style={{height: 14, width: 14, marginRight: 10}}
+                source={require('../../assets/png/dummyPemandangan.png')}
+                style={{top: 0, bottom: 0, left: 0, right: 0}}
               />
-              <Text>jam jadwal</Text>
+              <Text style={{position: 'absolute', bottom: 5, color: 'white'}}>
+                Rekomendasi {idx}
+              </Text>
             </View>
-          </View>
-
-          <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              alignSelf: 'flex-end',
-              position: 'absolute',
-
-              right: 40,
-              top: 0,
-              bottom: 0,
-              width: 40,
-              // position: 'absolute',
-              backgroundColor: '#ff6da0',
-            }}>
-            <Text>-</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              alignSelf: 'flex-end',
-              position: 'absolute',
-
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: 40,
-              // position: 'absolute',
-              backgroundColor: '#a5faf0',
-            }}>
-            <Text>+</Text>
-          </TouchableOpacity>
+          ))}
         </View>
-      ))}
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -83,18 +102,5 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 10,
-  },
-  itemListContainer: {
-    left: 0,
-    right: 0,
-    height: 120,
-    flexDirection: 'row',
-    borderRadius: 10,
-    backgroundColor: 'white',
-    elevation: 3,
-    marginTop: 18,
-    alignItems: 'center',
-    position: 'relative',
-    paddingHorizontal: 10,
   },
 });

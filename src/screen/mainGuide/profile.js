@@ -12,6 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
+import {G} from 'react-native-svg';
 
 const {width, height} = Dimensions.get('window');
 
@@ -54,14 +55,15 @@ function profile({navigation, firebase}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <View
+        <Image
+          source={require('../../assets/png/userDefault.png')}
           style={{
             height: 120,
             width: 120,
             borderRadius: 60,
-            backgroundColor: 'black',
           }}
         />
+
         <Gap height={7} />
         <Text style={{color: '#767676', fontSize: 14}}>Guide</Text>
         <Gap height={7} />
@@ -93,12 +95,72 @@ function profile({navigation, firebase}) {
             alignItems: 'center',
           }}>
           <Image
-            source={require('../../assets/png/blackScreen.jpg')}
+            source={require('../../assets/png/dummyPemandangan.png')}
             style={{height: 60, width: 60}}
           />
+          <Gap width={10} />
           <View>
-            <Text></Text>
-            <Text></Text>
+            <Text style={{fontWeight: 'bold', fontSize: 16}}>
+              Nama Tempat Kerja 1
+            </Text>
+            <Gap height={10} />
+            <Text>Wilayah Prov, City </Text>
+          </View>
+        </View>
+        <Gap height={5} />
+        <View
+          style={{
+            backgroundColor: '#fff',
+            left: 0,
+            right: 0,
+            height: 100,
+            paddingHorizontal: 7,
+            paddingVertical: 15,
+            elevation: 3,
+            marginVertical: 5,
+            borderRadius: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../../assets/png/dummyPemandangan.png')}
+            style={{height: 60, width: 60}}
+          />
+          <Gap width={10} />
+          <View>
+            <Text style={{fontWeight: 'bold', fontSize: 16}}>
+              Nama Tempat Kerja 1
+            </Text>
+            <Gap height={10} />
+            <Text>Wilayah Prov, City </Text>
+          </View>
+        </View>
+        <Gap height={5} />
+        <View
+          style={{
+            backgroundColor: '#fff',
+            left: 0,
+            right: 0,
+            height: 100,
+            paddingHorizontal: 7,
+            paddingVertical: 15,
+            elevation: 3,
+            marginVertical: 5,
+            borderRadius: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../../assets/png/dummyPemandangan.png')}
+            style={{height: 60, width: 60}}
+          />
+          <Gap width={10} />
+          <View>
+            <Text style={{fontWeight: 'bold', fontSize: 16}}>
+              Nama Tempat Kerja 1
+            </Text>
+            <Gap height={10} />
+            <Text>Wilayah Prov, City </Text>
           </View>
         </View>
       </View>

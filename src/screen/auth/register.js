@@ -25,14 +25,12 @@ function register({navigation, firebase}) {
 
   const getCity = async () => {
     try {
-      const {data} =
-        Prov &&
-        (await Axios.get(
-          `https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=${Prov}`,
-        ));
+      const {data} = await Axios.get(
+        `http://www.emsifa.com/api-wilayah-indonesia/api/regencies/${Prov}.json`,
+      );
 
-      const list = data?.kota_kabupaten?.map((data) => {
-        return {label: data.nama, value: data.nama};
+      const list = data?.map((data) => {
+        return {label: data.name, value: data.name};
       });
 
       const fixlist = [{value: 'Your city', label: 'Your city'}, ...list];
