@@ -1,9 +1,12 @@
+// import React, {Component} from 'react';
 import app from '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import Axios from 'axios';
-import {connect} from 'react-redux';
+// import {connect} from 'react-redux';
+
+// import {doAuthLogout} from '../redux/action/authAction';
 
 export default class Firebase {
   constructor() {
@@ -69,6 +72,13 @@ export default class Firebase {
     } catch (error) {
       return 'error';
     }
+  };
+
+  doLogout = async () => {
+    try {
+      await this.auth.signOut();
+      this.props.doAuthLogout();
+    } catch (error) {}
   };
 
   //! GUIDE //! GUIDE //! GUIDE //! GUIDE //! GUIDE
@@ -282,9 +292,13 @@ export default class Firebase {
     }
   };
 
-  doLogout = async () => {
+  doCheckRole = async () => {
     try {
-      await this.auth.signOut();
-    } catch (error) {}
+      const data = await this.db.collection('user').doc(this.myAccout).get();
+
+      return data.data().role;
+    } catch (error) {
+      return null;
+    }
   };
 }

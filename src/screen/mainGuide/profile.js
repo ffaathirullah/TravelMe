@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
@@ -19,6 +20,8 @@ function profile({navigation, firebase}) {
   const [Contact, setContact] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [Rating, setRating] = useState(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     firebase.doGetCurrentUserInfo().then((a) => {
@@ -36,7 +39,11 @@ function profile({navigation, firebase}) {
           <TouchableOpacity onPress={() => navigation.push('setting')}>
             <MaterialIcon size={24} name="settings" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => firebase.doLogout()}>
+          <TouchableOpacity
+            onPress={() => {
+              firebase.doLogout();
+              dispatch({type: 'LOGOUTADMINUSER'});
+            }}>
             <MaterialIcon size={24} name="logout" />
           </TouchableOpacity>
         </View>
