@@ -36,7 +36,7 @@ function profile({navigation, firebase}) {
           <TouchableOpacity onPress={() => navigation.push('setting')}>
             <MaterialIcon size={24} name="settings" />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => firebase.doLogout()}>
             <MaterialIcon size={24} name="logout" />
           </TouchableOpacity>
         </View>
