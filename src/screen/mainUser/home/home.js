@@ -13,7 +13,8 @@ import {Icon_travelMe_home, Icon_Search, Image_Air_Terjun, Image_Gunung} from '.
 import {BottomIcon, Category} from '../../../components';
 
 export default function home() {
-  return (<ScrollView>
+  return (
+    <ScrollView>
     <View style={styles.container}>
       <View style={styles.bagianAtas}>
         <Icon_travelMe_home style={styles.logo}/>
@@ -87,9 +88,10 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
+
+container: {
+flex : 1,
+backgroundColor: 'white'
   },
   bagianAtas: {
     flexDirection: 'row',
