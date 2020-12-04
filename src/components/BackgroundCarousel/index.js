@@ -9,29 +9,10 @@ function BackgroundCarousel (props) {
 
   scrollRef = React.createRef();
  const [state, setState] = useState({
-    selectedIndex: 0,
-    scrollRef : React.createRef()
+    selectedIndex: 0
  });
 
- componentDidMount = () => {
-    setInterval(() => {
-      this.setState(
-        prev => ({
-          selectedIndex:
-            prev.selectedIndex === this.props.images.length - 1
-              ? 0
-              : prev.selectedIndex + 1
-        }),
-        () => {
-          this.scrollRef.current.scrollTo({
-            animated: true,
-            x: DEVICE_WIDTH * this.state.selectedIndex,
-            y: 0
-          });
-        }
-      );
-    }, 3000);
-  };
+
 
   setSelectedIndex = event => {
     const contentOffset = event.nativeEvent.contentOffset;
@@ -44,6 +25,7 @@ function BackgroundCarousel (props) {
     const navigation = useNavigation();
     const { images } = props;
     const { selectedIndex } = state;
+
     return (
       <View style={{ height: "50%", width: "100%" }}>
         <ScrollView
