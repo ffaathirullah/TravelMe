@@ -89,6 +89,25 @@ export default function listDetail({route}) {
           magni nemo expedita, sequi odit facilis alias.{' '}
         </Text>
       </View>
+      <View
+        style={{
+          width,
+          bottom: 0,
+          position: 'absolute',
+          height: 60,
+          elevation: 1,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          // borderTopColor: '#000',
+          borderTopWidth: 0.1,
+        }}>
+        <Image
+          source={require('../../assets/png/iconMap.png')}
+          style={{height: 20, width: 20, marginHorizontal: 10}}
+        />
+        <Text>Lihat Peta</Text>
+      </View>
     </View>
   );
 }
