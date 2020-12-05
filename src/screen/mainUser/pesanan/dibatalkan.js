@@ -14,7 +14,7 @@ export default function dibatalkan({navigation}) {
         </View>
         <View style={{width: 124, height:58 , elevation: 3}}>
           <TouchableOpacity><Text style={{fontSize: 16, fontWeight: 'bold',}}>Dibatalkan</Text></TouchableOpacity>
-          <Icon_Aktif_Pesanan style={{ marginLeft: -20}}/>
+          <Icon_Aktif_Pesanan style={{marginTop: 14, marginLeft: -20}}/>
         </View>
         <View style={{width: 124, height:58 , elevation: 3}}>
           <TouchableOpacity style={{width: 124, height:58, elevation: 3}}><Text style={{fontSize: 16, fontWeight: 'bold',}} onPress={() => navigation.navigate('SelesaiRoute')}>Selesai</Text></TouchableOpacity>
