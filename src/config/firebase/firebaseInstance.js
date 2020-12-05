@@ -28,7 +28,7 @@ export default class Firebase {
   ) => {
     try {
       const {data} = await Axios.get(
-        `https://dev.farizdotid.com/api/daerahindonesia/provinsi/${prov}`,
+        `https://emsifa.github.io/api-wilayah-indonesia/api/province/${prov}.json`,
       );
 
       const {user} = await this.auth.createUserWithEmailAndPassword(
@@ -38,11 +38,11 @@ export default class Firebase {
       await this.db
         .collection('user')
         .doc(user.uid)
-        .set({role, email, name, contact, prov: data.nama, city});
+        .set({role, email, name, contact, prov: data.name, city});
       if (role === 'guide') {
         await this.db
           .collection('guide')
-          .doc(data.nama)
+          .doc(data.name)
           .collection(city)
           .doc(user.uid)
           .set({
@@ -50,7 +50,7 @@ export default class Firebase {
             email,
             contact,
             role,
-            province: data.nama,
+            province: data.name,
             city,
           });
       }
