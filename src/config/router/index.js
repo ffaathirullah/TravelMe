@@ -10,9 +10,9 @@ import mainAdmin from './mainAdmin';
 import mainUser from './mainUser';
 import mainGuide from './mainGuide';
 import settingScreen from '../../screen/setting/settingScreen';
+import listDetail from '../../screen/mainUser/list/listDetail';
 
 const Stack = createStackNavigator();
-
 function index({firebase}) {
   const myRole = useSelector((state) => state.authReducer.type);
   const dispatch = useDispatch();
@@ -31,7 +31,10 @@ function index({firebase}) {
         {myRole == null ? (
           <Stack.Screen name="auth" component={auth} />
         ) : myRole == 'user' ? (
+          <>
           <Stack.Screen name="user" component={mainUser} />
+          <Stack.Screen name="listDetail" component={listDetail} />
+          </>
         ) : myRole == 'admin' ? (
           <Stack.Screen name="admin" component={mainAdmin} />
         ) : (
@@ -39,7 +42,8 @@ function index({firebase}) {
             <Stack.Screen name="guide" component={mainGuide} />
             <Stack.Screen name="setting" component={settingScreen} />
           </>
-        )}
+        )
+      }
       </Stack.Navigator>
     </NavigationContainer>
   );

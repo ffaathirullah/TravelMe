@@ -5,55 +5,108 @@ import {
   View,
   Dimensions,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView,
+  Image
 } from 'react-native';
-import {Icon_travelMe_home, Icon_Search} from '../../../assets';
-import {BottomIcon} from '../../../components';
+import {Icon_travelMe_home, Icon_Search, Image_Air_Terjun, Image_Gunung} from '../../../assets';
+import {BottomIcon, Category} from '../../../components';
 
-export default function home() {
-  return (<View style={styles.container}>
-    <View style={styles.bagianAtas}>
-      <Icon_travelMe_home style={styles.logo}/>
-      <Text style={styles.textTravelme}>TravelMe</Text>
-    </View>
+export default function home({navigation, props}) {
+  return (
+    <ScrollView>
+    <View style={styles.container}>
+      <View style={styles.bagianAtas}>
+        <Icon_travelMe_home style={styles.logo}/>
+        <Text style={styles.textTravelme}>TravelMe</Text>
+        <View style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            height: 40,
+            width: 130,
+            borderRadius: 10,
+            backgroundColor: 'rgba(0,0,0,.1)'
+          }}>
+          <Image source={require('../../../assets/png/iconLocation.png')} style={{
+              height: 13,
+              width: 13,
+              resizeMode: 'cover',
+              marginHorizontal: 8
+            }}/>
+          <Text>Text lokasi</Text>
+        </View>
+      </View>
+      <View styles={styles.search}>
+        <TextInput placeholder="Cari Tempat Wisata, Cafe, dst" style={styles.txtInput}/>
+        <Icon_Search style={styles.searchIcon}/>
+      </View>
 
-    <View>
-      <Text style={styles.explore}>Explore Bandung!</Text>
-    </View>
+      <View style={styles.layanan}>
+        <View style={styles.iconLayanan}>
+          <BottomIcon title="Hutan Raya" type="layanan"/>
+          <BottomIcon title="Air Terjun" type="layanan"/>
+          <BottomIcon title="Gunung" type="layanan"/>
+          <BottomIcon title="Danau" type="layanan"/>
+          <BottomIcon title="Museum" type="layanan"/>
+          <BottomIcon title="Peternakan" type="layanan"/>
+          <BottomIcon title="Bukit" type="layanan"/>
+          <BottomIcon title="Perkebunan" type="layanan"/>
+        </View>
+      </View>
 
-    <View styles={styles.search}>
-      <TextInput placeholder="Cari Tempat Wisata, Cafe, dst" style={styles.txtInput}/>
-      <Icon_Search style={styles.searchIcon}/>
-    </View>
+      <View style={{
+          flex: 1,
+          backgroundColor: 'white',
+          paddingTop: 16
+        }}>
+        <Text style={{
+            fontSize: 15,
+            fontWeight: '700',
+            paddingHorizontal: 20
+          }}>
+          Rekomendasi Tempat
+        </Text>
 
-    <View style={styles.layanan}>
-      <View style={styles.iconLayanan}>
-        <BottomIcon title="Hutan Raya" type="layanan"/>
-        <BottomIcon title="Air Terjun" type="layanan"/>
-        <BottomIcon title="Gunung" type="layanan"/>
-        <BottomIcon title="Danau" type="layanan"/>
-        <BottomIcon title="Museum" type="layanan"/>
-        <BottomIcon title="Peternakan" type="layanan"/>
-        <BottomIcon title="Bukit" type="layanan"/>
-        <BottomIcon title="Perkebunan" type="layanan"/>
+        <View style={{
+            height: 130,
+            marginTop: 16
+          }}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity  onPress={() => navigation.navigate('listDetail')}>
+            <Category navigation={navigation} imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/ >
+            </TouchableOpacity>
+            <TouchableOpacity>
+            <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
+            </TouchableOpacity>
+            <TouchableOpacity>
+            <Category imageUri={require('../../../assets/image/image.jpg')} name="Air Terjun"/>
+            </TouchableOpacity>
+            <TouchableOpacity>
+            <Category imageUri={require('../../../assets/image/image2.jpg')} name="Gunung"/>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+
       </View>
     </View>
-
-  </View>);
+  </ScrollView>);
 }
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
+
+container: {
+flex : 1,
+backgroundColor: 'white'
   },
   bagianAtas: {
     flexDirection: 'row',
-    marginTop: windowHeight * 0.0184729064,
-    marginLeft: windowWidth * 0.04533333333
+    justifyContent: 'space-between',
+    marginVertical: 15,
+    alignItems: 'center',
+    paddingHorizontal: 20
   },
   logo: {
     width: windowWidth * 0.06666666666,
@@ -62,13 +115,12 @@ const styles = StyleSheet.create({
   textTravelme: {
     fontSize: 20,
     color: '#2D929A',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginLeft: -120
   },
   explore: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: windowHeight * 0.04802955665,
-    marginLeft: windowWidth * 0.04533333333
+    fontWeight: 'bold'
   },
   txtInput: {
     borderWidth: 1,
@@ -91,13 +143,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   layanan: {
-  paddingLeft: windowWidth * 0.04533333333,
-  paddingRight: windowWidth * 0.04533333333
-},
-iconLayanan: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: windowHeight * 0.02955665024,
-  flexWrap: 'wrap',
-},
+    paddingLeft: windowWidth * 0.04533333333,
+    paddingRight: windowWidth * 0.04533333333
+  },
+  iconLayanan: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: windowHeight * 0.02955665024,
+    flexWrap: 'wrap'
+  }
 });
