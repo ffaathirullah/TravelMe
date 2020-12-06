@@ -12,6 +12,9 @@ import mainGuide from './mainGuide';
 import settingScreen from '../../screen/setting/settingScreen';
 import listDetail from '../../screen/mainUser/list/listDetail';
 import SplashScreen from '../../screen/Splash/SplashScreen';
+import dibatalkanRoute from './dibatalkanRoute';
+import SelesaiRoute from './SelesaiRoute';
+import pesananRouter from './pesananRouter';
 
 const Stack = createStackNavigator();
 function index({firebase}) {
@@ -28,6 +31,11 @@ function index({firebase}) {
           <>
             <Stack.Screen name="user" component={mainUser} />
             <Stack.Screen name="listDetail" component={listDetail} />
+            <Stack.Screen name="user" component={mainUser} />
+            <Stack.Screen name="listDetail" component={listDetail} />
+            <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
+            <Stack.Screen name="SelesaiRoute" component={SelesaiRoute} />
+            <Stack.Screen name="pesananRouter" component={pesananRouter} />
           </>
         ) : myRole == 'admin' ? (
           <Stack.Screen name="admin" component={mainAdmin} />
