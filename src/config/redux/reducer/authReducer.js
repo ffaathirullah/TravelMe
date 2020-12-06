@@ -1,4 +1,4 @@
-const initialState = {auth: false, type: null};
+const initialState = {auth: false, type: 'splash'};
 
 export default function (state = initialState, action) {
   switch (action.type) {

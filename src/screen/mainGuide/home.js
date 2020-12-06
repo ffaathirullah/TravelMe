@@ -1,12 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useDispatch} from 'react-redux';
 
 import {Gap} from '../../components/atom';
+import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const {width, height} = Dimensions.get('window');
 
-export default function home() {
+function home({firebase}) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    firebase
+      .doGetCurrentUserInfo()
+      .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
+  }, []);
+
   return (
     <View style={{backgroundColor: '#fff', flex: 1, paddingHorizontal: 20}}>
       <View
@@ -131,6 +141,8 @@ export default function home() {
     </View>
   );
 }
+
+export default withFirebase(home);
 
 const styles = StyleSheet.create({
   textTravelme: {

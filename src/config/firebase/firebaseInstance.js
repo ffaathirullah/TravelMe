@@ -77,8 +77,10 @@ export default class Firebase {
   doLogout = async () => {
     try {
       await this.auth.signOut();
-      this.props.doAuthLogout();
-    } catch (error) {}
+      return 'logout';
+    } catch (error) {
+      return 'error';
+    }
   };
 
   //! GUIDE //! GUIDE //! GUIDE //! GUIDE //! GUIDE

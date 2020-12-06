@@ -12,7 +12,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
-import {G} from 'react-native-svg';
 
 const {width, height} = Dimensions.get('window');
 
@@ -22,15 +21,16 @@ function profile({navigation, firebase}) {
   const [profileImage, setProfileImage] = useState(null);
   const [Rating, setRating] = useState(null);
 
+  const userInfo = useSelector((state) => state.userInfo);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    firebase.doGetCurrentUserInfo().then((a) => {
-      setName(a.name);
-      setContact(a.contact);
-      setProfileImage(a.profileImage);
-    });
-  }, []);
+  const logoutFunc = async () => {
+    const logoutProc = await firebase.doLogout();
+    if (logoutProc == 'logout') {
+      dispatch({type: 'LOGOUTADMINUSER'});
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -40,11 +40,7 @@ function profile({navigation, firebase}) {
           <TouchableOpacity onPress={() => navigation.push('setting')}>
             <MaterialIcon size={24} name="settings" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              firebase.doLogout();
-              dispatch({type: 'LOGOUTADMINUSER'});
-            }}>
+          <TouchableOpacity onPress={() => logoutFunc()}>
             <MaterialIcon size={24} name="logout" />
           </TouchableOpacity>
         </View>
@@ -56,7 +52,7 @@ function profile({navigation, firebase}) {
           alignItems: 'center',
         }}>
         <Image
-          source={require('../../assets/png/userDefault.png')}
+          source={{uri: userInfo.profileImage}}
           style={{
             height: 120,
             width: 120,
@@ -67,9 +63,9 @@ function profile({navigation, firebase}) {
         <Gap height={7} />
         <Text style={{color: '#767676', fontSize: 14}}>Guide</Text>
         <Gap height={7} />
-        <Text style={{fontWeight: 'bold', fontSize: 16}}>Raden Shohih</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{userInfo.name}</Text>
         <Gap height={7} />
-        <Text style={{fontSize: 14}}>0811918948</Text>
+        <Text style={{fontSize: 14}}>{userInfo.contact} </Text>
         <Gap height={7} />
         <Text>Rating User</Text>
       </View>

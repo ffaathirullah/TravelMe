@@ -33,6 +33,8 @@ function login({navigation, firebase}) {
     }
   };
 
+  console.log('halo');
+
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>

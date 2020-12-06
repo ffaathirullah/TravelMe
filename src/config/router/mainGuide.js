@@ -12,6 +12,7 @@ const Guide = createBottomTabNavigator();
 export default function mainGuide() {
   return (
     <Guide.Navigator
+      // initialRouteName="listDest"
       headerMode={false}
       tabBarOptions={{activeTintColor: '#e91e63'}}>
       <Guide.Screen
