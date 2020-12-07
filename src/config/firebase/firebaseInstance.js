@@ -16,6 +16,63 @@ export default class Firebase {
     this.myAccout = auth().currentUser?.uid;
     this.role = null;
   }
+
+  //TODO Sendfile to Firebase
+
+  sendFile = async (uris = [], nameReq) => {
+    let cobaPromall = Promise.all(
+      uris.map((s) => {
+        return fetch(s.uri).then((x) => {
+          return x.blob();
+        });
+      }),
+    ).then((z) => {
+      return z;
+    });
+
+    // let fileprom = await Promise.resolve(file);
+
+    const getfullPaths = new Promise(async (res, rej) => {
+      let getFile = await cobaPromall;
+
+      let Fullpath = Promise.all(
+        getFile.map((fileSend, index) => {
+          const path = `reqeust/photo/${nameReq}/${nameReq}${index}`;
+          return this.storage
+            .ref(path)
+            .put(fileSend)
+            .then((nama) => {
+              return nama.metadata.fullPath;
+            })
+            .catch((err) => rej(err));
+        }),
+      ).then((data) => {
+        return data;
+      });
+
+      res(Fullpath);
+      rej('gagal');
+    });
+
+    return new Promise(async (res, rej) => {
+      try {
+        const fullPath = await getfullPaths;
+
+        let getDownloadURL = Promise.all(
+          fullPath.map((path) => {
+            return this.storage.ref(path).getDownloadURL();
+          }),
+        ).then((data) => {
+          return data;
+        });
+
+        res(getDownloadURL);
+      } catch (error) {
+        rej(error);
+      }
+    });
+  };
+
   //! AUTH //! AUTH //! AUTH //! AUTH //! AUTH
   doAuthCreateNewUser = async (
     name,
@@ -94,13 +151,23 @@ export default class Firebase {
     closeTime,
     lat,
     lang,
+    photos,
   ) => {
     try {
-      await this.db
-        .collection('admin')
-        .doc('request')
-        .collection('place')
-        .add({prov, city, name, desc, price, openTime, closeTime, lat, lang});
+      const photoUploaded = await this.sendFile(photos, name);
+
+      await this.db.collection('admin').doc('request').collection('place').add({
+        prov,
+        city,
+        name,
+        desc,
+        price,
+        openTime,
+        closeTime,
+        lat,
+        lang,
+        photo: photoUploaded,
+      });
 
       return 'succeed';
     } catch (error) {
@@ -155,12 +222,12 @@ export default class Firebase {
     }
   };
 
-  doGuideCountPlaceWork = async () => {
+  doGuideShowPlaceWork = async () => {
     try {
       const data = await this.db
         .collection('user')
         .doc(this.myAccout)
-        .collection('myPlace')
+        .collection('workPlace')
         .get();
 
       return data;

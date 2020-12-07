@@ -29,6 +29,7 @@ function profile({navigation, firebase}) {
     const logoutProc = await firebase.doLogout();
     if (logoutProc == 'logout') {
       dispatch({type: 'LOGOUTADMINUSER'});
+      dispatch({type: 'NULLMYSTATUS'});
     }
   };
 

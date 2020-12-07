@@ -35,6 +35,7 @@ function settingScreen({navigation, firebase}) {
       });
       setImageProfile(res.uri);
       const fileBlob = await fetch(res.uri).then((a) => a.blob());
+      console.log(fileBlob);
       setImageProfileBlob(fileBlob);
     } catch (err) {
       if (DocPicker.isCancel(err)) {

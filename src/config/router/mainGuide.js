@@ -6,10 +6,14 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import guideScreen from '../../screen/mainGuide/home';
 import listFlow from './mainGuideDestListFlow';
 import profile from '../../screen/mainGuide/profile';
+import {useDispatch, useSelector} from 'react-redux';
 
 const Guide = createBottomTabNavigator();
 
 export default function mainGuide() {
+  const state = useSelector((state) => state.state);
+  const dispatch = useDispatch();
+
   return (
     <Guide.Navigator
       // initialRouteName="listDest"

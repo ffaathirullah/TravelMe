@@ -5,6 +5,9 @@ export default function (state = initialState, action) {
     case 'MYSTATUS':
       return {...action.payload};
 
+    case 'NULLMYSTATUS':
+      return null;
+
     default:
       return state;
   }
