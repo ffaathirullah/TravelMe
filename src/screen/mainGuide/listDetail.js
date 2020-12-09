@@ -9,14 +9,34 @@ import {
   ScrollView,
   Linking,
   Platform,
+  Alert,
 } from 'react-native';
 import {Gap} from '../../components';
 import MapView, {Marker} from 'react-native-maps';
+import {withFirebase} from '../../config/firebase/firebaseContext';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import {useSelector} from 'react-redux';
 
 const {height, width} = Dimensions.get('window');
 
-export default function listDetail({route, navigation}) {
-  const {type, index} = route.params;
+function listDetail({route, navigation, firebase}) {
+  const {data, id} = route.params;
+
+  const userInfo = useSelector((state) => state.userInfo);
+  const workPlace = useSelector((state) => state.workPlace);
+
+  const addFunc = () => {
+    if (workPlace.length > 2) {
+      Alert.alert(
+        'Permintaan ditolak',
+        'Tempat kerja yang didaftarkan tidak bisa lebih dari tiga',
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: true},
+      );
+    } else {
+      firebase.doGuideAddPlaceWork(userInfo.prov, userInfo.city, id);
+    }
+  };
 
   const OpenMap = (lat, lng) => {
     const scheme = Platform.select({ios: 'maps:0,0?q=', android: 'geo:0,0?q='});
@@ -53,11 +73,9 @@ export default function listDetail({route, navigation}) {
                 alignItems: 'center',
               }}
               onPress={() =>
-                firebase
-                  .doAdminActionVerifPlaceAccept(data, myId)
-                  .then((a) => navigation.pop())
+                firebase.doGuideMinPlaceWork(userInfo.prov, userInfo.city, id)
               }>
-              <Text>-</Text>
+              <FeatherIcon name="minus" size={24} />
             </TouchableOpacity>
             <TouchableOpacity
               style={{
@@ -68,24 +86,34 @@ export default function listDetail({route, navigation}) {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={() =>
-                firebase
-                  .doAdminActionVerifPlaceReject(myId)
-                  .then((a) => navigation.pop())
-              }>
-              <Text>+</Text>
+              onPress={() => addFunc()}>
+              <FeatherIcon name="plus" size={24} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={{marginVertical: 24, marginHorizontal: 16}}>
-          <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-            {type} {index}
-          </Text>
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}>{data.name}</Text>
           <Gap height={17} />
-          <Text>jamBuka - jamTutup</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={require('../../assets/png/iconClock.png')}
+              style={{height: 14, width: 14, marginRight: 10}}
+            />
+            <Text>
+              {data.openTime} - {data.closeTime}
+            </Text>
+          </View>
           <Gap height={13} />
-          <Text>Provinsi - Kota</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={require('../../assets/png/iconLocation.png')}
+              style={{height: 14, width: 14, marginRight: 10}}
+            />
+            <Text style={{textTransform: 'capitalize'}}>
+              {data.prov}, {data.city}
+            </Text>
+          </View>
         </View>
 
         <View style={{marginHorizontal: 16}}>
@@ -93,11 +121,7 @@ export default function listDetail({route, navigation}) {
             Deskripsi Singkat
           </Text>
           <Gap height={8} />
-          <Text>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed vel
-            mollitia quae eius dignissimos, fugiat nesciunt veritatis laudantium
-            magni nemo expedita, sequi odit facilis alias.
-          </Text>
+          <Text>{data.desc}</Text>
         </View>
         <Gap height={15} />
         <View style={{marginHorizontal: 16}}>
@@ -153,18 +177,7 @@ export default function listDetail({route, navigation}) {
         <TouchableOpacity
           // onPress={() => navigation.push('guideMap')}
           onPress={() => OpenMap(-6.974027994937152, 107.63036776461826)}
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 1,
-            width: width - 20,
-            borderColor: '#2D929A',
-            height: 37,
-            borderRadius: 7,
-            paddingVertical: 7,
-            paddingHorizontal: 5,
-          }}>
+          style={styles.bottomMapContainer}>
           <Image
             source={require('../../assets/png/iconMap.png')}
             style={{height: 20, width: 20, marginHorizontal: 10}}
@@ -176,7 +189,21 @@ export default function listDetail({route, navigation}) {
   );
 }
 
+export default withFirebase(listDetail);
+
 const styles = StyleSheet.create({
+  bottomMapContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    width: width - 20,
+    borderColor: '#2D929A',
+    height: 37,
+    borderRadius: 7,
+    paddingVertical: 7,
+    paddingHorizontal: 5,
+  },
   optionContainer: {
     backgroundColor: 'white',
     height: 50,

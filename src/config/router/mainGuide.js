@@ -8,17 +8,42 @@ import listFlow from './mainGuideDestListFlow';
 import profile from '../../screen/mainGuide/profile';
 import {useDispatch, useSelector} from 'react-redux';
 import {withFirebase} from '../firebase/firebaseContext';
+import firestore from '@react-native-firebase/firestore';
 
 const Guide = createBottomTabNavigator();
 
-function mainGuide({firebase}) {
+function mainGuide({firebase, navigation}) {
   const dispatch = useDispatch();
 
+  const placeWorkPath = firestore()
+    .collection('user')
+    .doc(firebase.myAccout)
+    .collection('workPlace');
+
   useEffect(() => {
-    firebase
-      .doGetCurrentUserInfo()
-      .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
+    const subscribe = navigation.addListener('focus', () =>
+      firebase
+        .doGetCurrentUserInfo()
+        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
+    );
+
+    const getWorkPath = placeWorkPath.onSnapshot((querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          dispatch({type: 'ADDMYWORKPLACE', payload: change.doc.data()});
+        }
+
+        if (change.type === 'removed') {
+          dispatch({type: 'MINMYWORKPLACE', payload: change.doc.data()});
+        }
+      });
+    });
+
+    // firebase
+    //   .doGetCurrentUserInfo()
+    //   .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
     return () => {
+      subscribe;
       dispatch({type: 'NULLMYSTATUS'});
     };
   }, []);

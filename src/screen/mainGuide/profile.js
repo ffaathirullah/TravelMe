@@ -7,16 +7,61 @@ import {
   View,
   Dimensions,
   Image,
+  FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const {width, height} = Dimensions.get('window');
 
+const WorkPlaceCard = ({item, prov, city, firebase}) => {
+  const [Data, setData] = useState({});
+  useEffect(() => {
+    firebase
+      .doGuideGetPlaceInfo(prov, city, item.idWorkPlace)
+      .then((a) => setData(a));
+  }, []);
+
+  console.log(Data);
+
+  return (
+    <View style={styles.workPlaceCardContainer}>
+      <TouchableOpacity
+        onPress={() =>
+          firebase.doGuideMinPlaceWork(prov, city, item.idWorkPlace)
+        }
+        style={{
+          position: 'absolute',
+          top: 5,
+          right: 7,
+          paddingHorizontal: 10,
+          paddingVertical: 10,
+          backgroundColor: 'red',
+        }}>
+        <FeatherIcon name="trash" size={20} />
+      </TouchableOpacity>
+      <Image
+        source={require('../../assets/png/dummyPemandangan.png')}
+        style={{height: 60, width: 60}}
+      />
+      <Gap width={10} />
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{Data.name}</Text>
+        <Gap height={10} />
+        <Text style={{textTransform: 'capitalize'}}>
+          {Data.prov}, {Data.city}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 function profile({navigation, firebase}) {
   const userInfo = useSelector((state) => state.userInfo);
+  const workPlace = useSelector((state) => state.workPlace);
 
   const dispatch = useDispatch();
 
@@ -82,89 +127,19 @@ function profile({navigation, firebase}) {
           Wilayah Kerja Saya
         </Text>
         <Gap height={15} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
-        <Gap height={5} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
-        <Gap height={5} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
+        <FlatList
+          scrollEnabled={false}
+          data={workPlace}
+          renderItem={({item}) => (
+            <WorkPlaceCard
+              item={item}
+              prov={userInfo.prov}
+              city={userInfo.city}
+              firebase={firebase}
+            />
+          )}
+          keyExtractor={(item) => item.idWorkPlace}
+        />
       </View>
 
       <Gap height={30} />
@@ -245,5 +220,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  workPlaceCardContainer: {
+    backgroundColor: '#fff',
+    left: 0,
+    right: 0,
+    height: 100,
+    paddingHorizontal: 7,
+    paddingVertical: 15,
+    elevation: 3,
+    marginVertical: 5,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

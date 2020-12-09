@@ -177,7 +177,7 @@ export default class Firebase {
     }
   };
 
-  doGuideAddPlaceWork = async (prov, city, idPlace, nameUser) => {
+  doGuideAddPlaceWork = async (prov, city, idPlace) => {
     try {
       await this.db
         .collection('place')
@@ -186,14 +186,14 @@ export default class Firebase {
         .doc(idPlace)
         .collection('listGuide')
         .doc(this.myAccout)
-        .set({nameUser, uid: this.myAccout});
+        .set({uid: this.myAccout});
 
       await this.db
         .collection('user')
         .doc(this.myAccout)
-        .collection('myPlace')
+        .collection('workPlace')
         .doc(idPlace)
-        .set({status: 'enabled'});
+        .set({idWorkPlace: idPlace});
 
       return 'succeed';
     } catch (error) {
@@ -214,7 +214,7 @@ export default class Firebase {
       await this.db
         .collection('user')
         .doc(this.myAccout)
-        .collection('myPlace')
+        .collection('workPlace')
         .doc(idPlace)
         .delete();
 
@@ -224,7 +224,7 @@ export default class Firebase {
     }
   };
 
-  doGuideShowPlaceWork = async () => {
+  doGuideGetPlaceWork = async () => {
     try {
       const data = await this.db
         .collection('user')
@@ -232,7 +232,27 @@ export default class Firebase {
         .collection('workPlace')
         .get();
 
-      return data;
+      const list = [];
+      data.forEach((a) => {
+        list.push(a.data());
+      });
+
+      return list;
+    } catch (error) {
+      return [];
+    }
+  };
+
+  doGuideGetPlaceInfo = async (prov, city, idCity) => {
+    try {
+      const data = this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idCity)
+        .get();
+
+      return (await data).data();
     } catch (error) {}
   };
 
@@ -343,6 +363,7 @@ export default class Firebase {
       return error;
     }
   };
+
   doListGetLocation = async (prov, city, type) => {
     try {
       const data = await this.db
@@ -355,7 +376,7 @@ export default class Firebase {
       let list = [];
 
       data.forEach((doc) => {
-        list.push(doc.data());
+        list.push({...doc.data(), id: doc.id});
       });
 
       return list;

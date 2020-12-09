@@ -47,6 +47,13 @@ function home({firebase, navigation, route}) {
   // const deleteIndex = route.params?.deleteIndex;
   const dispatch = useDispatch();
 
+  const logoutFunc = async () => {
+    const logoutProc = await firebase.doLogout();
+    if (logoutProc == 'logout') {
+      dispatch({type: 'LOGOUTADMINUSER'});
+    }
+  };
+
   useEffect(() => {
     const subscribe = navigation.addListener('focus', () =>
       firebase.doAdminGetRequestLocation().then((a) => setListRequest(a)),
@@ -58,13 +65,7 @@ function home({firebase, navigation, route}) {
   }, [navigation]);
   return (
     <View>
-      <Button
-        title="logout"
-        onPress={() =>
-          // console.log(listRequest)
-          firebase.doLogout().then(() => dispatch({type: 'LOGOUTADMINUSER'}))
-        }
-      />
+      <Button title="logout" onPress={() => logoutFunc()} />
       {listRequest.map((item, idx) => (
         <View key={idx}>
           <ItemList item={item} navigation={navigation} />
