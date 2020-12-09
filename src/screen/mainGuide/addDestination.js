@@ -17,11 +17,23 @@ import DocPicker from 'react-native-document-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import {useDispatch, useSelector} from 'react-redux';
+import {Picker} from '@react-native-picker/picker';
 
 import {Gap} from '../../components';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const {height, width} = Dimensions.get('window');
+
+const typePicker = [
+  'Hutan Raya',
+  'Air Terjun',
+  'Gunung',
+  'Danau',
+  'Museum',
+  'Peternakan',
+  'Bukit',
+  'Perkebunan',
+];
 
 function addDestination({firebase, navigation}) {
   const [Title, setTitle] = useState(null);
@@ -37,6 +49,7 @@ function addDestination({firebase, navigation}) {
   const [showIndicator, setShowIndicator] = useState(false);
   const [ErrorInputan, setErrorInputan] = useState(null);
   const [RequestSucceed, setRequestSucceed] = useState(null);
+  const [typeDest, setTypeDest] = useState('Museum');
 
   const userInfo = useSelector((state) => state.userInfo);
   const dispatch = useDispatch();
@@ -61,7 +74,8 @@ function addDestination({firebase, navigation}) {
       date &&
       dateEnd &&
       PickLat &&
-      PickLng
+      PickLng &&
+      typeDest
     ) {
       firebase
         .doGuideSendPlace(
@@ -75,6 +89,7 @@ function addDestination({firebase, navigation}) {
           PickLat,
           PickLng,
           Photo,
+          typeDest,
         )
         .then(() => onSuccessSent());
     } else {
@@ -208,6 +223,18 @@ function addDestination({firebase, navigation}) {
             onChangeText={(text) => setTitle(text)}
             style={{flexGrow: 1}}
           />
+        </View>
+        <Gap height={20} />
+        <View style={styles.inputContainer}>
+          <Picker
+            mode="dropdown"
+            selectedValue={typeDest}
+            style={{flex: 1}}
+            onValueChange={(itemValue, idx) => setTypeDest(itemValue)}>
+            {typePicker.map((item, idx) => (
+              <Picker.Item label={item} value={item} key={item} />
+            ))}
+          </Picker>
         </View>
         <Gap height={20} />
         <View style={styles.inputContainer}>

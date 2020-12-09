@@ -4,6 +4,8 @@ import {createSharedElementStackNavigator} from 'react-navigation-shared-element
 
 import home from '../../screen/mainAdmin/home';
 import detailPlace from '../../screen/mainAdmin/detailPlace';
+import checkList from '../../screen/mainAdmin/checkList';
+import compareScreen from '../../screen/mainAdmin/compareItem';
 
 const MainAdmin = createSharedElementStackNavigator();
 
@@ -11,6 +13,8 @@ export default function mainAdmin() {
   return (
     <MainAdmin.Navigator headerMode="none">
       <MainAdmin.Screen name="home" component={home} />
+      <MainAdmin.Screen name="checkList" component={checkList} />
+      <MainAdmin.Screen name="compare" component={compareScreen} />
       <MainAdmin.Screen
         name="detailPlace"
         component={detailPlace}

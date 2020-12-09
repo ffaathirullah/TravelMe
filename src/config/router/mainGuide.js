@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
@@ -7,12 +7,21 @@ import guideScreen from '../../screen/mainGuide/home';
 import listFlow from './mainGuideDestListFlow';
 import profile from '../../screen/mainGuide/profile';
 import {useDispatch, useSelector} from 'react-redux';
+import {withFirebase} from '../firebase/firebaseContext';
 
 const Guide = createBottomTabNavigator();
 
-export default function mainGuide() {
-  const state = useSelector((state) => state.state);
+function mainGuide({firebase}) {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    firebase
+      .doGetCurrentUserInfo()
+      .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
+    return () => {
+      dispatch({type: 'NULLMYSTATUS'});
+    };
+  }, []);
 
   return (
     <Guide.Navigator
@@ -52,3 +61,5 @@ export default function mainGuide() {
     </Guide.Navigator>
   );
 }
+
+export default withFirebase(mainGuide);

@@ -11,12 +11,6 @@ const {width, height} = Dimensions.get('window');
 function home({firebase}) {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    firebase
-      .doGetCurrentUserInfo()
-      .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
-  }, []);
-
   return (
     <View style={{backgroundColor: '#fff', flex: 1, paddingHorizontal: 20}}>
       <View

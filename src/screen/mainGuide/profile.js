@@ -16,11 +16,6 @@ import {withFirebase} from '../../config/firebase/firebaseContext';
 const {width, height} = Dimensions.get('window');
 
 function profile({navigation, firebase}) {
-  const [Name, setName] = useState('');
-  const [Contact, setContact] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [Rating, setRating] = useState(null);
-
   const userInfo = useSelector((state) => state.userInfo);
 
   const dispatch = useDispatch();
@@ -29,7 +24,6 @@ function profile({navigation, firebase}) {
     const logoutProc = await firebase.doLogout();
     if (logoutProc == 'logout') {
       dispatch({type: 'LOGOUTADMINUSER'});
-      dispatch({type: 'NULLMYSTATUS'});
     }
   };
 
@@ -52,14 +46,25 @@ function profile({navigation, firebase}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Image
-          source={{uri: userInfo.profileImage}}
-          style={{
-            height: 120,
-            width: 120,
-            borderRadius: 60,
-          }}
-        />
+        {userInfo.profileImage ? (
+          <Image
+            source={{uri: userInfo.profileImage && userInfo.profileImage}}
+            style={{
+              height: 120,
+              width: 120,
+              borderRadius: 60,
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              height: 120,
+              width: 120,
+              borderRadius: 60,
+              backgroundColor: 'black',
+            }}
+          />
+        )}
 
         <Gap height={7} />
         <Text style={{color: '#767676', fontSize: 14}}>Guide</Text>

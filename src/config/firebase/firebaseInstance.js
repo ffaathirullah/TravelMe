@@ -152,6 +152,7 @@ export default class Firebase {
     lat,
     lang,
     photos,
+    type,
   ) => {
     try {
       const photoUploaded = await this.sendFile(photos, name);
@@ -167,6 +168,7 @@ export default class Firebase {
         lat,
         lang,
         photo: photoUploaded,
+        type,
       });
 
       return 'succeed';
@@ -341,12 +343,13 @@ export default class Firebase {
       return error;
     }
   };
-  doListGetLocation = async (prov, city) => {
+  doListGetLocation = async (prov, city, type) => {
     try {
       const data = await this.db
         .collection('place')
         .doc(prov)
         .collection(city)
+        .where('type', '==', type)
         .get();
 
       let list = [];
@@ -369,5 +372,14 @@ export default class Firebase {
     } catch (error) {
       return null;
     }
+  };
+
+  doLiveCheck = async () => {
+    try {
+      const query = this.db.collection('admin');
+
+      const observer = query.onSnapshot((item) => item);
+      return observer;
+    } catch (error) {}
   };
 }
