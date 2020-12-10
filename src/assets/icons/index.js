@@ -14,6 +14,14 @@ import Icon_Hutan_Raya from './Hutan_Raya.svg';
 import Icon_Museum from './Museum.svg';
 import Icon_Perkebunan from './Perkebunan.svg';
 import Icon_Peternakan from './Peternakan.svg';
+import Icon_backstackManipulation from './Icon_backstackManipulation.svg';
+import Icon_Flag from './flag.svg';
+import Icon_Waktu from './waktu.svg';
+import Icon_Bawah from './icon_bawah.svg';
+import Icon_Tambah_ulasan from './tambah_ulasan.svg';
+import Icon_Bintang from './icon_bintang.svg';
+import Icon_Peta from './Icon_Peta.svg';
+import Icon_Aktif_Pesanan from './icon_aktif_pesanan.svg';
 export {
   Icon_home,
   Icon_home_aktif,
@@ -30,5 +38,13 @@ export {
   Icon_Hutan_Raya,
   Icon_Museum,
   Icon_Perkebunan,
-  Icon_Peternakan
+  Icon_Peternakan,
+  Icon_backstackManipulation,
+  Icon_Flag,
+  Icon_Waktu,
+  Icon_Bawah,
+  Icon_Tambah_ulasan,
+  Icon_Bintang,
+  Icon_Peta,
+  Icon_Aktif_Pesanan
 };

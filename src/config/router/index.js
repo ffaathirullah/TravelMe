@@ -5,33 +5,36 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {withFirebase} from '../firebase/firebaseContext';
 
+import SplashScreen from '../../screen/Splash/SplashScreen';
 import auth from './auth';
 import mainAdmin from './mainAdmin';
 import mainUser from './mainUser';
+import dibatalkanRoute from './dibatalkanRoute';
+import SelesaiRoute from './SelesaiRoute';
+import pesananRouter from './pesananRouter';
 import mainGuide from './mainGuide';
 import settingScreen from '../../screen/setting/settingScreen';
+import listDetail from '../../screen/mainUser/list/listDetail';
 
 const Stack = createStackNavigator();
-
 function index({firebase}) {
   const myRole = useSelector((state) => state.authReducer.type);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    firebase
-      .doCheckRole()
-      .then((RoleUser) =>
-        dispatch({type: 'LOGINADMINUSER', payload: RoleUser}),
-      );
-  }, []);
 
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode="none">
-        {myRole == null ? (
+        {myRole == 'splash' ? (
+          <Stack.Screen name="splash" component={SplashScreen} />
+        ) : myRole == null ? (
           <Stack.Screen name="auth" component={auth} />
         ) : myRole == 'user' ? (
-          <Stack.Screen name="user" component={mainUser} />
+          <>
+            <Stack.Screen name="user" component={mainUser} />
+            <Stack.Screen name="listDetail" component={listDetail} />
+            <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
+            <Stack.Screen name="SelesaiRoute" component={SelesaiRoute} />
+            <Stack.Screen name="pesananRouter" component={pesananRouter} />
+          </>
         ) : myRole == 'admin' ? (
           <Stack.Screen name="admin" component={mainAdmin} />
         ) : (

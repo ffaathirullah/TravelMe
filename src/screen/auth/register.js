@@ -72,7 +72,6 @@ function register({navigation, firebase}) {
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <Text>{Error && Error} </Text>
-        <Text>{Email && Email} </Text>
         <InputText
           type="text"
           placeholder="name"

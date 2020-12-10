@@ -7,30 +7,74 @@ import {
   View,
   Dimensions,
   Image,
+  FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
-import {G} from 'react-native-svg';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import authFirebase from '@react-native-firebase/auth';
 
 const {width, height} = Dimensions.get('window');
 
+const WorkPlaceCard = ({item, prov, city, firebase}) => {
+  const [Data, setData] = useState({});
+
+  const myUid = authFirebase().currentUser?.uid;
+
+  useEffect(() => {
+    firebase
+      .doGuideGetPlaceInfo(prov, city, item.idWorkPlace)
+      .then((a) => setData(a));
+  }, []);
+
+  console.log(Data);
+
+  return (
+    <View style={styles.workPlaceCardContainer}>
+      <TouchableOpacity
+        onPress={() =>
+          firebase.doGuideMinPlaceWork(prov, city, item.idWorkPlace, myUid)
+        }
+        style={{
+          position: 'absolute',
+          top: 5,
+          right: 7,
+          paddingHorizontal: 10,
+          paddingVertical: 10,
+          backgroundColor: 'red',
+        }}>
+        <FeatherIcon name="trash" size={20} />
+      </TouchableOpacity>
+      <Image
+        source={require('../../assets/png/dummyPemandangan.png')}
+        style={{height: 60, width: 60}}
+      />
+      <Gap width={10} />
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{Data.name}</Text>
+        <Gap height={10} />
+        <Text style={{textTransform: 'capitalize'}}>
+          {Data.prov}, {Data.city}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 function profile({navigation, firebase}) {
-  const [Name, setName] = useState('');
-  const [Contact, setContact] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [Rating, setRating] = useState(null);
+  const userInfo = useSelector((state) => state.userInfo);
+  const workPlace = useSelector((state) => state.workPlace);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    firebase.doGetCurrentUserInfo().then((a) => {
-      setName(a.name);
-      setContact(a.contact);
-      setProfileImage(a.profileImage);
-    });
-  }, []);
+  const logoutFunc = async () => {
+    const logoutProc = await firebase.doLogout();
+    if (logoutProc == 'logout') {
+      dispatch({type: 'LOGOUTADMINUSER'});
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -40,11 +84,7 @@ function profile({navigation, firebase}) {
           <TouchableOpacity onPress={() => navigation.push('setting')}>
             <MaterialIcon size={24} name="settings" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              firebase.doLogout();
-              dispatch({type: 'LOGOUTADMINUSER'});
-            }}>
+          <TouchableOpacity onPress={() => logoutFunc()}>
             <MaterialIcon size={24} name="logout" />
           </TouchableOpacity>
         </View>
@@ -55,21 +95,32 @@ function profile({navigation, firebase}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Image
-          source={require('../../assets/png/userDefault.png')}
-          style={{
-            height: 120,
-            width: 120,
-            borderRadius: 60,
-          }}
-        />
+        {userInfo.profileImage ? (
+          <Image
+            source={{uri: userInfo.profileImage && userInfo.profileImage}}
+            style={{
+              height: 120,
+              width: 120,
+              borderRadius: 60,
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              height: 120,
+              width: 120,
+              borderRadius: 60,
+              backgroundColor: 'black',
+            }}
+          />
+        )}
 
         <Gap height={7} />
         <Text style={{color: '#767676', fontSize: 14}}>Guide</Text>
         <Gap height={7} />
-        <Text style={{fontWeight: 'bold', fontSize: 16}}>Raden Shohih</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{userInfo.name}</Text>
         <Gap height={7} />
-        <Text style={{fontSize: 14}}>0811918948</Text>
+        <Text style={{fontSize: 14}}>{userInfo.contact} </Text>
         <Gap height={7} />
         <Text>Rating User</Text>
       </View>
@@ -80,89 +131,19 @@ function profile({navigation, firebase}) {
           Wilayah Kerja Saya
         </Text>
         <Gap height={15} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
-        <Gap height={5} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
-        <Gap height={5} />
-        <View
-          style={{
-            backgroundColor: '#fff',
-            left: 0,
-            right: 0,
-            height: 100,
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 60, width: 60}}
-          />
-          <Gap width={10} />
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama Tempat Kerja 1
-            </Text>
-            <Gap height={10} />
-            <Text>Wilayah Prov, City </Text>
-          </View>
-        </View>
+        <FlatList
+          scrollEnabled={false}
+          data={workPlace}
+          renderItem={({item}) => (
+            <WorkPlaceCard
+              item={item}
+              prov={userInfo.prov}
+              city={userInfo.city}
+              firebase={firebase}
+            />
+          )}
+          keyExtractor={(item) => item.idWorkPlace}
+        />
       </View>
 
       <Gap height={30} />
@@ -243,5 +224,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  workPlaceCardContainer: {
+    backgroundColor: '#fff',
+    left: 0,
+    right: 0,
+    height: 100,
+    paddingHorizontal: 7,
+    paddingVertical: 15,
+    elevation: 3,
+    marginVertical: 5,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

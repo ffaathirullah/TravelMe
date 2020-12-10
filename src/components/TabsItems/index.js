@@ -16,7 +16,7 @@ const TabsItems = ({label, isFocused, onPress, onLongPress}) => {
     if (label === 'Home') {
       return isFocused ? <Icon_home_aktif /> : <Icon_home />;
     }
-    if (label === 'Map') {
+    if (label === 'Pesanan') {
       return isFocused ? <Icon_pesanan_aktif /> : <Icon_pesanan />;
     }
     if (label === 'Profile') {

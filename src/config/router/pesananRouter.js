@@ -8,9 +8,9 @@ import profile from '../../screen/mainUser/profile/profile';
 
 const MainUser = createBottomTabNavigator();
 
-export default function mainUser() {
+export default function pesananRouter() {
   return (
-    <MainUser.Navigator headerMode="none"  tabBar={(props) => <BottomNavigator {...props} />}>
+    <MainUser.Navigator headerMode="none"  initialRouteName="Pesanan"  tabBar={(props) => <BottomNavigator {...props} />}>
       <MainUser.Screen name="Home" component={home} />
       <MainUser.Screen name="Pesanan" component={pesanan} />
       <MainUser.Screen name="Profile" component={profile} />

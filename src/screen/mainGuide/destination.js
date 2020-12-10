@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import NavIcon from '../../utils/navIcon';
 import {Gap} from '../../components/atom';
@@ -25,16 +26,17 @@ export default function listDest({navigation}) {
       </Text>
 
       <Gap height={30} />
+      <TouchableOpacity
+        onPress={() => navigation.push('addDest')}
+        activeOpacity={0.7}
+        style={styles.buttonAddDest}>
+        <Text>Tambah destinasi baru</Text>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'space-evenly',
-          alignContent: 'center',
-          alignItems: 'center',
-          paddingHorizontal: 10,
-        }}>
+        <FeatherIcon name="plus" size={24} />
+      </TouchableOpacity>
+      <Gap height={30} />
+
+      <View style={styles.iconListContainer}>
         {NavIcon.map((a, idx) => (
           <TouchableOpacity
             onPress={() => navigation.push('lists', {type: a.type})}
@@ -102,5 +104,26 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 10,
+  },
+  buttonAddDest: {
+    height: 50,
+    left: 0,
+    right: 0,
+    borderRadius: 7,
+    elevation: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: '#fcfcfc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  iconListContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    alignContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
 });

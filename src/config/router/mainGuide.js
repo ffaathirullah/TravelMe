@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FAIcon from 'react-native-vector-icons/FontAwesome5';
@@ -6,12 +6,56 @@ import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import guideScreen from '../../screen/mainGuide/home';
 import listFlow from './mainGuideDestListFlow';
 import profile from '../../screen/mainGuide/profile';
+import {useDispatch, useSelector} from 'react-redux';
+import {withFirebase} from '../firebase/firebaseContext';
+import firestore from '@react-native-firebase/firestore';
+
+import authFirebase from '@react-native-firebase/auth';
 
 const Guide = createBottomTabNavigator();
 
-export default function mainGuide() {
+function mainGuide({firebase, navigation}) {
+  const dispatch = useDispatch();
+  const myUid = authFirebase().currentUser?.uid;
+
+  const placeWorkPath = firestore()
+    .collection('user')
+    .doc(myUid)
+    .collection('workPlace');
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () =>
+      firebase
+        .doGetCurrentUserInfo(myUid)
+        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
+    );
+
+    const getWorkPath = placeWorkPath.onSnapshot((querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          dispatch({type: 'ADDMYWORKPLACE', payload: change.doc.data()});
+        }
+
+        if (change.type === 'removed') {
+          dispatch({type: 'MINMYWORKPLACE', payload: change.doc.data()});
+        }
+      });
+    });
+
+    // firebase
+    //   .doGetCurrentUserInfo()
+    //   .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
+    return () => {
+      subscribe;
+      getWorkPath;
+      dispatch({type: 'NULLMYSTATUS'});
+      dispatch({type: 'NULLWORKPLACE'});
+    };
+  }, []);
+
   return (
     <Guide.Navigator
+      // initialRouteName="listDest"
       headerMode={false}
       tabBarOptions={{activeTintColor: '#e91e63'}}>
       <Guide.Screen
@@ -47,3 +91,5 @@ export default function mainGuide() {
     </Guide.Navigator>
   );
 }
+
+export default withFirebase(mainGuide);

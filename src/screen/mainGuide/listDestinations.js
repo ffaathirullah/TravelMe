@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -6,86 +6,99 @@ import {
   View,
   TouchableOpacity,
   Image,
+  FlatList,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import {Gap} from '../../components';
 
-export default function listDestinations({route, navigation}) {
+import {withFirebase} from '../../config/firebase/firebaseContext';
+
+const ItemDestination = ({item, navigation}) => {
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.push('detail', {data: item, id: item.id})}
+      style={styles.itemListContainer}>
+      <Image
+        source={require('../../assets/png/dummyPemandangan.png')}
+        style={{
+          height: 80,
+          width: 80,
+          marginHorizontal: 10,
+        }}
+      />
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{item.name}</Text>
+        <Gap height={5} />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            source={require('../../assets/png/iconClock.png')}
+            style={{height: 14, width: 14, marginRight: 10}}
+          />
+          <Text>
+            {item.openTime} - {item.closeTime}
+          </Text>
+        </View>
+        <Gap height={5} />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            source={require('../../assets/png/iconLocation.png')}
+            style={{height: 14, width: 14, marginRight: 10}}
+          />
+          <Text style={{textTransform: 'capitalize'}}>{item.city}</Text>
+        </View>
+      </View>
+      {/* //Todo Status */}
+      {/* <TouchableOpacity
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'flex-end',
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: 40,
+          backgroundColor: '#a5faf0',
+        }}>
+        <Text>Status</Text>
+      </TouchableOpacity> */}
+    </TouchableOpacity>
+  );
+};
+
+function listDestinations({route, navigation, firebase}) {
+  const [ListDest, setListDest] = useState([]);
   const {type} = route.params;
-  console.log(type);
+
+  const userInfo = useSelector((state) => state.userInfo);
+
+  useEffect(() => {
+    firebase
+      .doListGetLocation(userInfo.prov, userInfo.city, type)
+      .then((a) => setListDest(a));
+    // return () => {
+    //   cleanup
+    // }
+  }, []);
 
   return (
-    <ScrollView
-      style={{paddingHorizontal: 15, flex: 1, backgroundColor: 'white'}}>
+    <View style={{paddingHorizontal: 15, flex: 1, backgroundColor: 'white'}}>
       <Text style={{marginTop: 20, fontWeight: 'bold', fontSize: 20}}>
         Pilih Tempat Kerja Anda
       </Text>
-      {[...Array(9)].map((a, idx) => (
-        <TouchableOpacity
-          onPress={() => navigation.push('detail', {type, index: idx})}
-          key={idx}
-          style={styles.itemListContainer}>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{
-              height: 80,
-              width: 80,
-              marginHorizontal: 10,
-            }}
-          />
-
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              {type} {idx}
-            </Text>
-            <Gap height={10} />
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Image
-                source={require('../../assets/png/iconClock.png')}
-                style={{height: 14, width: 14, marginRight: 10}}
-              />
-              <Text>jam jadwal</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              alignSelf: 'flex-end',
-              position: 'absolute',
-
-              right: 40,
-              top: 0,
-              bottom: 0,
-              width: 40,
-              // position: 'absolute',
-              backgroundColor: '#ff6da0',
-            }}>
-            <Text>-</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              alignSelf: 'flex-end',
-              position: 'absolute',
-
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: 40,
-              // position: 'absolute',
-              backgroundColor: '#a5faf0',
-            }}>
-            <Text>+</Text>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+      <FlatList
+        data={ListDest}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => (
+          <ItemDestination item={item} navigation={navigation} />
+        )}
+      />
+    </View>
   );
 }
+
+export default withFirebase(listDestinations);
 
 const styles = StyleSheet.create({
   itemListContainer: {

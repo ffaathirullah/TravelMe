@@ -13,9 +13,66 @@ export default class Firebase {
     this.db = database();
     this.auth = auth();
     this.storage = storage();
-    this.myAccout = auth().currentUser?.uid;
+    this.myAccout = this.auth.currentUser?.uid;
     this.role = null;
   }
+
+  //TODO Sendfile to Firebase
+
+  sendFile = async (uris = [], nameReq) => {
+    let cobaPromall = Promise.all(
+      uris.map((s) => {
+        return fetch(s.uri).then((x) => {
+          return x.blob();
+        });
+      }),
+    ).then((z) => {
+      return z;
+    });
+
+    // let fileprom = await Promise.resolve(file);
+
+    const getfullPaths = new Promise(async (res, rej) => {
+      let getFile = await cobaPromall;
+
+      let Fullpath = Promise.all(
+        getFile.map((fileSend, index) => {
+          const path = `reqeust/photo/${nameReq}/${nameReq}${index}`;
+          return this.storage
+            .ref(path)
+            .put(fileSend)
+            .then((nama) => {
+              return nama.metadata.fullPath;
+            })
+            .catch((err) => rej(err));
+        }),
+      ).then((data) => {
+        return data;
+      });
+
+      res(Fullpath);
+      rej('gagal');
+    });
+
+    return new Promise(async (res, rej) => {
+      try {
+        const fullPath = await getfullPaths;
+
+        let getDownloadURL = Promise.all(
+          fullPath.map((path) => {
+            return this.storage.ref(path).getDownloadURL();
+          }),
+        ).then((data) => {
+          return data;
+        });
+
+        res(getDownloadURL);
+      } catch (error) {
+        rej(error);
+      }
+    });
+  };
+
   //! AUTH //! AUTH //! AUTH //! AUTH //! AUTH
   doAuthCreateNewUser = async (
     name,
@@ -28,7 +85,7 @@ export default class Firebase {
   ) => {
     try {
       const {data} = await Axios.get(
-        `https://dev.farizdotid.com/api/daerahindonesia/provinsi/${prov}`,
+        `https://emsifa.github.io/api-wilayah-indonesia/api/province/${prov}.json`,
       );
 
       const {user} = await this.auth.createUserWithEmailAndPassword(
@@ -38,11 +95,11 @@ export default class Firebase {
       await this.db
         .collection('user')
         .doc(user.uid)
-        .set({role, email, name, contact, prov: data.nama, city});
+        .set({role, email, name, contact, prov: data.name, city});
       if (role === 'guide') {
         await this.db
           .collection('guide')
-          .doc(data.nama)
+          .doc(data.name)
           .collection(city)
           .doc(user.uid)
           .set({
@@ -50,7 +107,7 @@ export default class Firebase {
             email,
             contact,
             role,
-            province: data.nama,
+            province: data.name,
             city,
           });
       }
@@ -77,8 +134,10 @@ export default class Firebase {
   doLogout = async () => {
     try {
       await this.auth.signOut();
-      this.props.doAuthLogout();
-    } catch (error) {}
+      return 'logout';
+    } catch (error) {
+      return 'error';
+    }
   };
 
   //! GUIDE //! GUIDE //! GUIDE //! GUIDE //! GUIDE
@@ -92,13 +151,25 @@ export default class Firebase {
     closeTime,
     lat,
     lang,
+    photos,
+    type,
   ) => {
     try {
-      await this.db
-        .collection('admin')
-        .doc('request')
-        .collection('place')
-        .add({prov, city, name, desc, price, openTime, closeTime, lat, lang});
+      const photoUploaded = await this.sendFile(photos, name);
+
+      await this.db.collection('admin').doc('request').collection('place').add({
+        prov,
+        city,
+        name,
+        desc,
+        price,
+        openTime,
+        closeTime,
+        lat,
+        lang,
+        photo: photoUploaded,
+        type,
+      });
 
       return 'succeed';
     } catch (error) {
@@ -106,7 +177,7 @@ export default class Firebase {
     }
   };
 
-  doGuideAddPlaceWork = async (prov, city, idPlace, nameUser) => {
+  doGuideAddPlaceWork = async (prov, city, idPlace, myUid) => {
     try {
       await this.db
         .collection('place')
@@ -114,22 +185,22 @@ export default class Firebase {
         .collection(city)
         .doc(idPlace)
         .collection('listGuide')
-        .doc(this.myAccout)
-        .set({nameUser, uid: this.myAccout});
+        .doc(myUid)
+        .set({uid: myUid});
 
       await this.db
         .collection('user')
-        .doc(this.myAccout)
-        .collection('myPlace')
+        .doc(myUid)
+        .collection('workPlace')
         .doc(idPlace)
-        .set({status: 'enabled'});
+        .set({idWorkPlace: idPlace});
 
       return 'succeed';
     } catch (error) {
       return 'failed';
     }
   };
-  doGuideMinPlaceWork = async (prov, city, idPlace) => {
+  doGuideMinPlaceWork = async (prov, city, idPlace, myUid) => {
     try {
       await this.db
         .collection('place')
@@ -137,13 +208,13 @@ export default class Firebase {
         .collection(city)
         .doc(idPlace)
         .collection('listGuide')
-        .doc(this.myAccout)
+        .doc(myUid)
         .delete();
 
       await this.db
         .collection('user')
-        .doc(this.myAccout)
-        .collection('myPlace')
+        .doc(myUid)
+        .collection('workPlace')
         .doc(idPlace)
         .delete();
 
@@ -153,15 +224,35 @@ export default class Firebase {
     }
   };
 
-  doGuideCountPlaceWork = async () => {
+  doGuideGetPlaceWork = async (myUid) => {
     try {
       const data = await this.db
         .collection('user')
-        .doc(this.myAccout)
-        .collection('myPlace')
+        .doc(myUid)
+        .collection('workPlace')
         .get();
 
-      return data;
+      const list = [];
+      data.forEach((a) => {
+        list.push(a.data());
+      });
+
+      return list;
+    } catch (error) {
+      return [];
+    }
+  };
+
+  doGuideGetPlaceInfo = async (prov, city, idCity) => {
+    try {
+      const data = this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idCity)
+        .get();
+
+      return (await data).data();
     } catch (error) {}
   };
 
@@ -241,22 +332,19 @@ export default class Firebase {
   };
 
   //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV //! UNIV
-  doSettingChangePhoto = async (fileURI, newName, newContact) => {
+  doSettingChangePhoto = async (fileURI, newName, newContact, myUid) => {
     try {
-      const ref = await this.storage.ref(`photo/${this.myAccout}/myPhoto.png`);
+      const ref = await this.storage.ref(`photo/${myUid}/myPhoto.png`);
       const send = await ref.put(fileURI);
       const getFullPathImage = await this.storage
         .ref(send.metadata.fullPath)
         .getDownloadURL();
 
-      const updateDBUser = await this.db
-        .collection('user')
-        .doc(this.myAccout)
-        .update({
-          profileImage: getFullPathImage,
-          contact: newContact,
-          name: newName,
-        });
+      const updateDBUser = await this.db.collection('user').doc(myUid).update({
+        profileImage: getFullPathImage,
+        contact: newContact,
+        name: newName,
+      });
 
       return 'sukses';
     } catch (error) {
@@ -264,26 +352,28 @@ export default class Firebase {
     }
   };
 
-  doGetCurrentUserInfo = async () => {
+  doGetCurrentUserInfo = async (myUid) => {
     try {
-      const data = await this.db.collection('user').doc(this.myAccout).get();
+      const data = await this.db.collection('user').doc(myUid).get();
       return data.data();
     } catch (error) {
       return error;
     }
   };
-  doListGetLocation = async (prov, city) => {
+
+  doListGetLocation = async (prov, city, type) => {
     try {
       const data = await this.db
         .collection('place')
         .doc(prov)
         .collection(city)
+        .where('type', '==', type)
         .get();
 
       let list = [];
 
       data.forEach((doc) => {
-        list.push(doc.data());
+        list.push({...doc.data(), id: doc.id});
       });
 
       return list;
@@ -292,13 +382,22 @@ export default class Firebase {
     }
   };
 
-  doCheckRole = async () => {
+  doCheckRole = async (myUid) => {
     try {
-      const data = await this.db.collection('user').doc(this.myAccout).get();
+      const data = await this.db.collection('user').doc(myUid).get();
 
       return data.data().role;
     } catch (error) {
       return null;
     }
+  };
+
+  doLiveCheck = async () => {
+    try {
+      const query = this.db.collection('admin');
+
+      const observer = query.onSnapshot((item) => item);
+      return observer;
+    } catch (error) {}
   };
 }
