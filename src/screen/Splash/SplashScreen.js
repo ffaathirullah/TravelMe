@@ -2,12 +2,14 @@ import React, {useEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {withFirebase} from '../../config/firebase/firebaseContext';
+import authFirebase from '@react-native-firebase/auth';
 
 function SplashScreen({firebase}) {
   const dispatch = useDispatch();
+  const myUid = authFirebase().currentUser?.uid;
 
   const firstActionFunc = async () => {
-    const myRole = await firebase.doCheckRole();
+    const myRole = await firebase.doCheckRole(myUid);
 
     if (myRole == null) {
       setTimeout(() => {

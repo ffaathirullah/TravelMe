@@ -1,16 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Button as EButton,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 import {withFirebase} from '../../config/firebase/firebaseContext';
-
 import {InputText, Gap, Link, Button} from '../../components';
+import authFirebase from '@react-native-firebase/auth';
 
 function login({navigation, firebase}) {
   const [Email, setEmail] = useState(null);
   const [Password, setPassword] = useState(null);
   const [Error, setError] = useState('');
   const dispatch = useDispatch();
+
+  const myUid = authFirebase().currentUser?.uid;
 
   const loginFunc = async () => {
     if (Email == null || Password == null) {
@@ -32,8 +40,6 @@ function login({navigation, firebase}) {
       }
     }
   };
-
-  console.log('halo');
 
   return (
     <View style={styles.container}>

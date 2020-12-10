@@ -16,11 +16,13 @@ import MapView, {Marker} from 'react-native-maps';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
+import authFirebase from '@react-native-firebase/auth';
 
 const {height, width} = Dimensions.get('window');
 
 function listDetail({route, navigation, firebase}) {
   const {data, id} = route.params;
+  const myUid = authFirebase().currentUser?.uid;
 
   const userInfo = useSelector((state) => state.userInfo);
   const workPlace = useSelector((state) => state.workPlace);
@@ -34,7 +36,7 @@ function listDetail({route, navigation, firebase}) {
         {cancelable: true},
       );
     } else {
-      firebase.doGuideAddPlaceWork(userInfo.prov, userInfo.city, id);
+      firebase.doGuideAddPlaceWork(userInfo.prov, userInfo.city, id, myUid);
     }
   };
 
@@ -73,7 +75,12 @@ function listDetail({route, navigation, firebase}) {
                 alignItems: 'center',
               }}
               onPress={() =>
-                firebase.doGuideMinPlaceWork(userInfo.prov, userInfo.city, id)
+                firebase.doGuideMinPlaceWork(
+                  userInfo.prov,
+                  userInfo.city,
+                  id,
+                  myUid,
+                )
               }>
               <FeatherIcon name="minus" size={24} />
             </TouchableOpacity>

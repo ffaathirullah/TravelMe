@@ -28,6 +28,8 @@ function settingScreen({navigation, firebase}) {
   const [ImageProfileBlob, setImageProfileBlob] = useState(null);
   const [Loading, setLoading] = useState(false);
 
+  const myUid = authFirebase().currentUser?.uid;
+
   const pickeDocument = async () => {
     try {
       const res = await DocPicker.pick({
@@ -53,6 +55,7 @@ function settingScreen({navigation, firebase}) {
         ImageProfileBlob,
         Name,
         Contact,
+        myUid,
       );
       setLoading(false);
       navigation.push('guide');

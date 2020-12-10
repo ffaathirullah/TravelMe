@@ -19,6 +19,9 @@ const {width, height} = Dimensions.get('window');
 
 const WorkPlaceCard = ({item, prov, city, firebase}) => {
   const [Data, setData] = useState({});
+
+  const myUid = authFirebase().currentUser?.uid;
+
   useEffect(() => {
     firebase
       .doGuideGetPlaceInfo(prov, city, item.idWorkPlace)
@@ -31,7 +34,7 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
     <View style={styles.workPlaceCardContainer}>
       <TouchableOpacity
         onPress={() =>
-          firebase.doGuideMinPlaceWork(prov, city, item.idWorkPlace)
+          firebase.doGuideMinPlaceWork(prov, city, item.idWorkPlace, myUid)
         }
         style={{
           position: 'absolute',

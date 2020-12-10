@@ -10,6 +10,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {withFirebase} from '../firebase/firebaseContext';
 import firestore from '@react-native-firebase/firestore';
 
+import authFirebase from '@react-native-firebase/auth';
+
+const myUid = authFirebase().currentUser?.uid;
+
 const Guide = createBottomTabNavigator();
 
 function mainGuide({firebase, navigation}) {
@@ -17,13 +21,13 @@ function mainGuide({firebase, navigation}) {
 
   const placeWorkPath = firestore()
     .collection('user')
-    .doc(firebase.myAccout)
+    .doc(myUid)
     .collection('workPlace');
 
   useEffect(() => {
     const subscribe = navigation.addListener('focus', () =>
       firebase
-        .doGetCurrentUserInfo()
+        .doGetCurrentUserInfo(myUid)
         .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
     );
 
