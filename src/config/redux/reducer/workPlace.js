@@ -11,6 +11,9 @@ export default function (state = initialState, action) {
 
       return getFilter;
 
+    case 'NULLWORKPLACE':
+      return [];
+
     default:
       return state;
   }

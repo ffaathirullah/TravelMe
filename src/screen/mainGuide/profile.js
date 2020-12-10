@@ -14,6 +14,7 @@ import {Gap} from '../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import authFirebase from '@react-native-firebase/auth';
 
 const {width, height} = Dimensions.get('window');
 

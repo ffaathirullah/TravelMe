@@ -12,12 +12,11 @@ import firestore from '@react-native-firebase/firestore';
 
 import authFirebase from '@react-native-firebase/auth';
 
-const myUid = authFirebase().currentUser?.uid;
-
 const Guide = createBottomTabNavigator();
 
 function mainGuide({firebase, navigation}) {
   const dispatch = useDispatch();
+  const myUid = authFirebase().currentUser?.uid;
 
   const placeWorkPath = firestore()
     .collection('user')
@@ -25,11 +24,11 @@ function mainGuide({firebase, navigation}) {
     .collection('workPlace');
 
   useEffect(() => {
-    const subscribe = navigation.addListener('focus', () =>
-      firebase
-        .doGetCurrentUserInfo(myUid)
-        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
-    );
+    // const subscribe = navigation.addListener('focus', () =>
+    firebase
+      .doGetCurrentUserInfo(myUid)
+      .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
+    // );
 
     const getWorkPath = placeWorkPath.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
@@ -47,8 +46,10 @@ function mainGuide({firebase, navigation}) {
     //   .doGetCurrentUserInfo()
     //   .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
     return () => {
-      subscribe;
+      // subscribe;
+      getWorkPath;
       dispatch({type: 'NULLMYSTATUS'});
+      dispatch({type: 'NULLWORKPLACE'});
     };
   }, []);
 
