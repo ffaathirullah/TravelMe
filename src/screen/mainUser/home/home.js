@@ -24,6 +24,8 @@ import {BottomIcon, Category, Picker, Gap} from '../../../components';
 import ProvList from '../../../utils/provList.json';
 import auth from '@react-native-firebase/auth';
 
+import NavIcon from '../../../utils/navIcon';
+
 const LocationModal = ({
   showModal,
   setShowModal,
@@ -195,6 +197,7 @@ export default function home({navigation, props}) {
               flexDirection: 'row',
               paddingVertical: 4,
               width: 130,
+              overflow: 'hidden',
               borderRadius: 10,
               backgroundColor: 'rgba(0,0,0,.1)',
             }}>
@@ -207,7 +210,10 @@ export default function home({navigation, props}) {
                 marginHorizontal: 8,
               }}
             />
-            <Text style={{textTransform: 'capitalize'}} ellipsizeMode="tail">
+            <Text
+              numberOfLines={2}
+              style={{textTransform: 'capitalize', flexWrap: 'wrap'}}
+              ellipsizeMode="tail">
               {city}
             </Text>
           </TouchableOpacity>
@@ -222,14 +228,31 @@ export default function home({navigation, props}) {
 
         <View style={styles.layanan}>
           <View style={styles.iconLayanan}>
-            <BottomIcon title="Hutan Raya" type="layanan" />
-            <BottomIcon title="Air Terjun" type="layanan" />
-            <BottomIcon title="Gunung" type="layanan" />
-            <BottomIcon title="Danau" type="layanan" />
-            <BottomIcon title="Museum" type="layanan" />
-            <BottomIcon title="Peternakan" type="layanan" />
-            <BottomIcon title="Bukit" type="layanan" />
-            <BottomIcon title="Perkebunan" type="layanan" />
+            {NavIcon.map((a, idx) => (
+              <TouchableOpacity
+                // onPress={() => {
+
+                //   console.log(a.type);
+                // }}
+                onPress={() => {
+                  navigation.navigate('listScreen', {type: a.type});
+                }}
+                key={idx.toString()}
+                style={{
+                  marginHorizontal: 7,
+                  width: 70,
+                  height: 65,
+                  marginVertical: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image source={a.img} style={{height: 60, width: 60}} />
+                <Gap height={4} />
+                <Text adjustsFontSizeToFit numberOfLines={1}>
+                  {a.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 

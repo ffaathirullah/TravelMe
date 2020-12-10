@@ -14,7 +14,10 @@ import SelesaiRoute from './SelesaiRoute';
 import pesananRouter from './pesananRouter';
 import mainGuide from './mainGuide';
 import settingScreen from '../../screen/setting/settingScreen';
+import listScreen from '../../screen/mainUser/list/listScreen';
 import listDetail from '../../screen/mainUser/list/listDetail';
+import listGuide from '../../screen/mainUser/list/listGuide';
+import seekGuideProfile from '../../screen/mainUser/profile/seekGuideProfile';
 
 const Stack = createStackNavigator();
 function index({firebase}) {
@@ -30,7 +33,13 @@ function index({firebase}) {
         ) : myRole == 'user' ? (
           <>
             <Stack.Screen name="user" component={mainUser} />
+            <Stack.Screen name="listScreen" component={listScreen} />
             <Stack.Screen name="listDetail" component={listDetail} />
+            <Stack.Screen name="listGuide" component={listGuide} />
+            <Stack.Screen
+              name="seekGuideProfile"
+              component={seekGuideProfile}
+            />
             <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
             <Stack.Screen name="SelesaiRoute" component={SelesaiRoute} />
             <Stack.Screen name="pesananRouter" component={pesananRouter} />

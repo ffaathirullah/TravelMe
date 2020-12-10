@@ -355,7 +355,7 @@ export default class Firebase {
   doGetCurrentUserInfo = async (myUid) => {
     try {
       const data = await this.db.collection('user').doc(myUid).get();
-      return data.data();
+      return {...data.data(), id: data.id};
     } catch (error) {
       return error;
     }
@@ -399,5 +399,26 @@ export default class Firebase {
       const observer = query.onSnapshot((item) => item);
       return observer;
     } catch (error) {}
+  };
+
+  doGetListGuide = async (prov, city, idPlace) => {
+    try {
+      const data = await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idPlace)
+        .collection('listGuide')
+        .get();
+
+      const list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+      return list;
+    } catch (error) {
+      return [];
+    }
   };
 }

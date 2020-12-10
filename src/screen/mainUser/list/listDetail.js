@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
   Platform,
   StyleSheet,
@@ -6,8 +6,11 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
+  Image,
+  FlatList,
 } from 'react-native';
-import {BackgroundCarousel} from '../../../components';
+import {BackgroundCarousel, Gap} from '../../../components';
 import {
   Icon_Flag,
   Icon_Waktu,
@@ -17,95 +20,220 @@ import {
   Icon_Bintang,
   Icon_Peta,
 } from '../../../assets';
+import {withFirebase} from '../../../config/firebase/firebaseContext';
+import {useSelector} from 'react-redux';
 
-const images = [
-  'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban1.jpg?alt=media&token=06baf0f7-7b61-4521-b1e1-f86bf9cd7e04',
-  'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban2.jpg?alt=media&token=1b331d9d-110a-41d4-8b21-17d2606e85e9',
-  'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban3.jpg?alt=media&token=23a5f7f2-46ad-4e2e-97d8-f233202fec10',
-  'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban4.jpg?alt=media&token=8b82ef81-2f6b-4f15-8548-1df273ed2282',
-  'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban5.jpg?alt=media&token=079ecd88-1b3c-4231-9132-c8ed5434b9fb',
-];
-function listDetail() {
+const {height, width} = Dimensions.get('window');
+
+function listDetail({route, firebase, navigation}) {
+  const {data} = route.params;
+  const [guideList, setGuideList] = useState([]);
+  const [state, setState] = useState({
+    selectedIndex: 0,
+  });
+  scrollRef = React.createRef();
+  const {selectedIndex} = state;
+
+  const areaDest = useSelector((state) => state.areaDestReducer);
+
+  setSelectedIndex = (event) => {
+    const contentOffset = event.nativeEvent.contentOffset;
+    const viewSize = event.nativeEvent.layoutMeasurement;
+
+    const selectedIndex = Math.floor(contentOffset.x / viewSize.width);
+    setState({selectedIndex});
+  };
+
+  useEffect(() => {
+    firebase
+      .doGetListGuide(areaDest.prov, areaDest.city, data.id)
+      .then((data) => {
+        setGuideList(data);
+      });
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <BackgroundCarousel images={images} />
-      <ScrollView>
-        <View style={styles.bawahCarousel}>
-          <Text style={styles.txtDetail}>Gunung Tangkupan Perahu</Text>
-          <View style={styles.waktu}>
-            <Icon_Waktu />
-            <Text style={styles.txtWaktu}>09.00 - 16.00</Text>
-          </View>
-          <View style={styles.waktu}>
-            <Icon_Flag />
-            <Text style={styles.txtFlag}>Tersedia Tour Guide</Text>
-          </View>
-          <View style={styles.deskripsi}>
-            <Text style={styles.txtDeskripsi}>Deskripsi Singkat</Text>
-            <Text style={styles.txtDeskripsiLengkap}>
-              Salah satu destinasi wisata yang berada di Bandung berikutnya
-              masih memiliki nuansa pegunungan. Yaitu Gunung Tangkuban Perahu
-              yang merupakan salah satu tempat wisata alam yang wajib Anda
-              kunjungi ketiak
-            </Text>
-            <TouchableOpacity style={styles.selengkapnya}>
-              <Text>Selengkapnya</Text>
-              <Icon_Bawah />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>
-            <TouchableOpacity style={styles.ulasan}>
-              <Icon_Tambah_ulasan />
-              <Text>Tambah Ulasan</Text>
-            </TouchableOpacity>
-            <View style={styles.hasilUlasan}>
-              <Icon_Bukit
-                style={{
-                  height: 40,
-                  width: 40,
-                }}
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: 'space-between',
+        backgroundColor: 'white',
+      }}
+      style={{backgroundColor: 'white'}}>
+      <View>
+        <View>
+          <FlatList
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={setSelectedIndex}
+            ref={scrollRef}
+            data={data.photo}
+            keyExtractor={(item) => item}
+            renderItem={({item}) => (
+              <Image style={{height: 350, width}} source={{uri: item}} />
+            )}
+          />
+          <View style={styles.circleDiv}>
+            {data.photo.map((image, i) => (
+              <View
+                style={[
+                  styles.whiteCircle,
+                  {opacity: i === selectedIndex ? 1 : 0.5},
+                ]}
+                key={image}
+                active={i === selectedIndex}
               />
-              <View style={styles.dataUlasan}>
-                <Text>Nino Carl</Text>
-                <Icon_Bintang />
-                <Text>Bagus tempatnya unik, udaranya segar</Text>
-              </View>
-            </View>
-
-            <View style={styles.palingBawah}>
-              <TouchableOpacity style={styles.peta}>
-                <Icon_Peta />
-                <Text style={styles.txtPeta}>Peta</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.jasaTour}>
-                <Text style={styles.txtJasaTour}>Pesan Jasa Tour Guide</Text>
-              </TouchableOpacity>
-            </View>
+            ))}
           </View>
         </View>
-      </ScrollView>
-    </View>
+        <View style={{marginVertical: 24, marginHorizontal: 16}}>
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}>{data.name}</Text>
+          <Gap height={17} />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon_Waktu />
+
+            <Text style={styles.txtWaktu}>
+              {data.openTime} - {data.closeTime}
+            </Text>
+          </View>
+          <Gap height={13} />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={require('../../../assets/png/iconLocation.png')}
+              style={{height: 14, width: 14, marginRight: 10}}
+            />
+            <Text style={{textTransform: 'capitalize'}}>
+              {data.prov}, {data.city}
+            </Text>
+          </View>
+
+          <Gap height={13} />
+          <View style={styles.waktu}>
+            <Icon_Flag />
+            <Text style={styles.txtFlag}>
+              {guideList.length > 0
+                ? 'Tersedia Tour Guide'
+                : 'Tour Guide Tidak Tersedia'}
+            </Text>
+          </View>
+        </View>
+
+        <View style={{marginHorizontal: 16}}>
+          <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+            Deskripsi Singkat
+          </Text>
+          <Gap height={8} />
+          <Text>{data.desc}</Text>
+        </View>
+        <Gap height={15} />
+        <View style={{marginHorizontal: 16}}>
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+            ulasan(10 orang)
+          </Text>
+          {[...Array(4)].map((item, idx) => (
+            <View key={idx}>
+              <Gap height={8} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  elevation: 3,
+                  backgroundColor: '#fff',
+                  height: 80,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}>
+                <Image
+                  source={require('../../../assets/png/userDefault.png')}
+                  style={{
+                    height: 40,
+                    width: 40,
+                    resizeMode: 'cover',
+                    borderRadius: 20,
+                    marginHorizontal: 10,
+                  }}
+                />
+                <View>
+                  <Text>nama review</Text>
+                  <Text>rating</Text>
+                  <Text>pesan</Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.containerMapandGuide}>
+        <TouchableOpacity style={styles.peta}>
+          <Icon_Peta />
+          <Text style={styles.txtPeta}>Peta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.push('listGuide', {data: guideList})}
+          style={styles.jasaTour}>
+          <Text style={styles.txtJasaTour}>Pesan Jasa Tour Guide</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
-export default listDetail;
+export default withFirebase(listDetail);
 
 const styles = StyleSheet.create({
+  bottomMapContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    width: width - 20,
+    borderColor: '#2D929A',
+    height: 37,
+    borderRadius: 7,
+    paddingVertical: 7,
+    paddingHorizontal: 5,
+  },
+  containerMapandGuide: {
+    marginTop: 10,
+    width,
+    height: 60,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 0.3,
+    elevation: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+  },
+  optionContainer: {
+    backgroundColor: 'white',
+    height: 50,
+    width: 150,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    borderTopLeftRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    elevation: 1,
+    overflow: 'hidden',
+  },
   bawahCarousel: {
     marginLeft: 16,
     marginRight: 22,
   },
   container: {
-    flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'red',
   },
   txtDetail: {
     fontWeight: 'bold',
     fontSize: 20,
   },
   waktu: {
-    marginTop: 17,
     flexDirection: 'row',
   },
   txtWaktu: {
@@ -113,7 +241,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   txtFlag: {
-    marginTop: -4,
     marginLeft: 6,
   },
   deskripsi: {
@@ -156,6 +283,37 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginLeft: 21,
   },
+
+  txtJasaTour: {
+    color: 'white',
+  },
+  txtPeta: {
+    color: '#2D929A',
+  },
+  palingBawah: {
+    flexDirection: 'row',
+    marginTop: 19,
+  },
+  circleDiv: {
+    position: 'absolute',
+    bottom: 25,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: 10,
+  },
+  whiteCircle: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    borderColor: '#000',
+    borderWidth: 0.1,
+    margin: 5,
+    backgroundColor: '#fff',
+    elevation: 3,
+  },
   peta: {
     borderStyle: 'solid',
     borderWidth: 2,
@@ -171,19 +329,10 @@ const styles = StyleSheet.create({
   jasaTour: {
     borderRadius: 10,
     width: 238,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2D929A',
     marginLeft: 16,
-  },
-  txtJasaTour: {
-    color: 'white',
-  },
-  txtPeta: {
-    color: '#2D929A',
-  },
-  palingBawah: {
-    flexDirection: 'row',
-    marginTop: 19,
   },
 });
