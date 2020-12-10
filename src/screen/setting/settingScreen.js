@@ -7,17 +7,18 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
+  Modal,
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import Axios from 'axios';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import FaIcon from 'react-native-vector-icons/FontAwesome5';
-
-import {withFirebase} from '../../config/firebase/firebaseContext';
-
 import DocPicker from 'react-native-document-picker';
+import authFirebase from '@react-native-firebase/auth';
+import Axios from 'axios';
 
 import {Gap} from '../../components';
+import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const {width, height} = Dimensions.get('window');
 
@@ -25,7 +26,6 @@ function settingScreen({navigation, firebase}) {
   const [Name, setName] = useState('');
   const [Contact, setContact] = useState(null);
   const [ImageProfile, setImageProfile] = useState(null);
-  const [ImageProfileBlob, setImageProfileBlob] = useState(null);
   const [Loading, setLoading] = useState(false);
 
   const myUid = authFirebase().currentUser?.uid;
@@ -36,9 +36,6 @@ function settingScreen({navigation, firebase}) {
         type: [DocPicker.types.images],
       });
       setImageProfile(res.uri);
-      const fileBlob = await fetch(res.uri).then((a) => a.blob());
-      console.log(fileBlob);
-      setImageProfileBlob(fileBlob);
     } catch (err) {
       if (DocPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -47,23 +44,23 @@ function settingScreen({navigation, firebase}) {
       }
     }
   };
-
   const saveData = async () => {
     try {
       setLoading(true);
-      const firebaseUpload = await firebase.doSettingChangePhoto(
-        ImageProfileBlob,
-        Name,
-        Contact,
-        myUid,
-      );
+      const fileBlob = await fetch(ImageProfile).then((a) => a.blob());
+
+      await firebase
+        .doSettingChangePhoto(fileBlob, Name, Contact, myUid)
+        .then((a) => console.log(a));
       setLoading(false);
-      navigation.push('guide');
-    } catch (error) {}
+      navigation.popToTop();
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    firebase.doGetCurrentUserInfo().then((a) => {
+    firebase.doGetCurrentUserInfo(myUid).then((a) => {
       setName(a.name);
       setContact(a.contact);
       setImageProfile(a.profileImage);
@@ -72,6 +69,18 @@ function settingScreen({navigation, firebase}) {
 
   return (
     <View style={styles.container}>
+      <Modal visible={Loading} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,.6)',
+          }}>
+          <ActivityIndicator size="large" color="#0ff" />
+          <Text style={{fontSize: 20, color: '#fff'}}>Mohon tunggu</Text>
+        </View>
+      </Modal>
       <View style={styles.header}>
         <Text style={{fontWeight: 'bold', fontSize: 24}}>Setting</Text>
         <TouchableOpacity

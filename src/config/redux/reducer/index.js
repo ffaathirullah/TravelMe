@@ -3,6 +3,7 @@ import guideStat from './guideStat';
 import gpsState from './gpsReducer';
 import userInfo from './userInfoReducer';
 import workPlace from './workPlace';
+import areaDestReducer from './areaDestReducer';
 import {combineReducers} from 'redux';
 
 const rootReducer = combineReducers({
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   guideStat,
   userInfo,
   workPlace,
+  areaDestReducer,
   // gpsState,
 });
 

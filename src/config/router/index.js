@@ -5,16 +5,16 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {withFirebase} from '../firebase/firebaseContext';
 
+import SplashScreen from '../../screen/Splash/SplashScreen';
 import auth from './auth';
 import mainAdmin from './mainAdmin';
 import mainUser from './mainUser';
-import mainGuide from './mainGuide';
-import settingScreen from '../../screen/setting/settingScreen';
-import listDetail from '../../screen/mainUser/list/listDetail';
-import SplashScreen from '../../screen/Splash/SplashScreen';
 import dibatalkanRoute from './dibatalkanRoute';
 import SelesaiRoute from './SelesaiRoute';
 import pesananRouter from './pesananRouter';
+import mainGuide from './mainGuide';
+import settingScreen from '../../screen/setting/settingScreen';
+import listDetail from '../../screen/mainUser/list/listDetail';
 
 const Stack = createStackNavigator();
 function index({firebase}) {
