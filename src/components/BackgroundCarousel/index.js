@@ -1,114 +1,120 @@
-import  React , {useState, createRef, useEffect  } from "react";
-import { StyleSheet, View, ScrollView, Dimensions, Image, TouchableOpacity } from "react-native";
+import React, {useState, createRef, useEffect} from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import {Icon_backstackManipulation} from '../../assets';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const DEVICE_WIDTH = Dimensions.get("window").width;
+const DEVICE_WIDTH = Dimensions.get('window').width;
 
-function BackgroundCarousel (props) {
-
+function BackgroundCarousel(props) {
   scrollRef = React.createRef();
- const [state, setState] = useState({
-    selectedIndex: 0
- });
+  const [state, setState] = useState({
+    selectedIndex: 0,
+  });
 
-
-
-  setSelectedIndex = event => {
+  setSelectedIndex = (event) => {
     const contentOffset = event.nativeEvent.contentOffset;
     const viewSize = event.nativeEvent.layoutMeasurement;
 
     const selectedIndex = Math.floor(contentOffset.x / viewSize.width);
-    setState({ selectedIndex });
+    setState({selectedIndex});
   };
 
-    const navigation = useNavigation();
-    const { images } = props;
-    const { selectedIndex } = state;
+  const navigation = useNavigation();
+  const {images} = props;
+  const {selectedIndex} = state;
 
-    return (
-      <View style={{ height: "50%", width: "100%" }}>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          onMomentumScrollEnd={setSelectedIndex}
-          ref={scrollRef}
-        >
-          {images.map(image => (
-            <Image
-              style={styles.backgroundImage}
-              source={{ uri: image }}
-              key={image}
-            />
-          ))}
-        </ScrollView>
-        <View style={styles.backstackView}>
-          <View style={styles.circleBackstack}>
-          </View>
-          <TouchableOpacity  style={styles.backStack}   onPress={() => { navigation.navigate('Home')  } } >
-            <Icon_backstackManipulation/>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.circleDiv}>
-          {images.map((image, i) => (
-            <View
-              style={[
-                styles.whiteCircle,
-                { opacity: i === selectedIndex ? 0.5 : 1 }
-              ]}
-              key={image}
-              active={i === selectedIndex}
-            />
-          ))}
-        </View>
+  return (
+    <View style={{height: '35%', width: '100%', backgroundColor: 'red'}}>
+      <FlatList
+        horizontal
+        pagingEnabled
+        onMomentumScrollEnd={setSelectedIndex}
+        ref={scrollRef}
+        data={images}
+        keyExtractor={(item) => item}
+        renderItem={({item}) => (
+          <Image style={styles.backgroundImage} source={{uri: item}} />
+        )}
+      />
+
+      <View style={[styles.backstackView, styles.circleBackstack]}>
+        <TouchableOpacity
+          style={styles.backStack}
+          onPress={() => {
+            navigation.pop();
+          }}>
+          <Icon_backstackManipulation />
+        </TouchableOpacity>
       </View>
-    );
+      <View style={styles.circleDiv}>
+        {images.map((image, i) => (
+          <View
+            style={[
+              styles.whiteCircle,
+              {opacity: i === selectedIndex ? 1 : 0.5},
+            ]}
+            key={image}
+            active={i === selectedIndex}
+          />
+        ))}
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
-    height: "100%",
-    width: Dimensions.get("window").width
+    height: '100%',
+    width: Dimensions.get('window').width,
   },
   circleDiv: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 55,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: 10
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: 10,
   },
   whiteCircle: {
     width: 6,
     height: 6,
     borderRadius: 3,
+    borderColor: '#000',
+    borderWidth: 0.1,
     margin: 5,
-    backgroundColor: "#fff"
+    backgroundColor: '#fff',
+    elevation: 3,
   },
   backStack: {
-      position: "absolute",
-      alignItems: "center",
-      justifyContent: "center",
-      left: 8,
-      top:  8,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 8,
+    top: 8,
   },
-  circleBackstack:{
-    backgroundColor: "#fff",
+  circleBackstack: {
+    backgroundColor: '#fff',
     width: 40,
     height: 38,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    overflow: 'hidden'
-
+    borderRadius: 20,
+    overflow: 'hidden',
   },
-  backstackView:{
-    bottom: 270,
-    left: 16
-  }
+  backstackView: {
+    position: 'absolute',
+    elevation: 5,
+    top: 20,
+    left: 16,
+  },
 });
 
 export default BackgroundCarousel;
