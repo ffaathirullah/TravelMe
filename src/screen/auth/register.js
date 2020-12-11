@@ -60,7 +60,7 @@ function register({navigation, firebase}) {
           }
         });
     } else {
-      setError('PLease fill the blank');
+      setError('Isi semua form kosong!');
     }
   };
 
@@ -69,74 +69,73 @@ function register({navigation, firebase}) {
   }, [Prov]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text>{Error && Error} </Text>
-        <InputText
-          type="text"
-          placeholder="name"
-          iconName="user"
-          onChangeText={(text) => setName(text)}
-        />
-        <Gap height={15} />
-        <InputText
-          type="text"
-          placeholder="email"
-          iconName="user"
-          onChangeText={(mail) => setEmail(mail)}
-        />
-        <Gap height={15} />
-        <InputText
-          type="password"
-          placeholder="password"
-          iconName="lock"
-          onChangeText={(pass) => setPassword(pass)}
-        />
-        <Gap height={15} />
-        <InputText
-          type="text"
-          placeholder="Phone Number"
-          iconName="smartphone"
-          keyBoardType="numeric"
-          onChangeText={(pass) => setContact(pass)}
-        />
-        <Gap height={15} />
+    <View style={styles.formContainer}>
+      <Text style={styles.title}>Silahkan Register dulu!</Text>
+      <Text style={styles.subTitle}>Isi form agar kamu dapat mebuat akun</Text>
+      <Text style={styles.textError}>{Error && Error} </Text>
+      <InputText
+        type="text"
+        placeholder="name"
+        iconName="user"
+        onChangeText={(text) => setName(text)}
+      />
+      <Gap height={15} />
+      <InputText
+        type="text"
+        placeholder="email"
+        iconName="user"
+        onChangeText={(mail) => setEmail(mail)}
+      />
+      <Gap height={15} />
+      <InputText
+        type="password"
+        placeholder="password"
+        iconName="lock"
+        onChangeText={(pass) => setPassword(pass)}
+      />
+      <Gap height={15} />
+      <InputText
+        type="text"
+        placeholder="Phone Number"
+        iconName="smartphone"
+        keyBoardType="numeric"
+        onChangeText={(pass) => setContact(pass)}
+      />
+      <Gap height={15} />
 
+      <Picker
+        items={roleItems}
+        onValueChange={(s) => setRole(s)}
+        selectedValue={Role}
+        iconName="user"
+      />
+
+      <Gap height={15} />
+      <Picker
+        items={ProvList.provinsi}
+        onValueChange={(s) => setProv(s)}
+        selectedValue={Prov}
+        iconName="user"
+      />
+
+      <Gap height={15} />
+      {CityList && (
         <Picker
-          items={roleItems}
-          onValueChange={(s) => setRole(s)}
-          selectedValue={Role}
+          items={CityList}
+          onValueChange={(s) => setCity(s)}
+          selectedValue={City}
           iconName="user"
+          enabled={Prov ? true : false}
         />
+      )}
+      <Gap height={15} />
 
-        <Gap height={15} />
-        <Picker
-          items={ProvList.provinsi}
-          onValueChange={(s) => setProv(s)}
-          selectedValue={Prov}
-          iconName="user"
-        />
-
-        <Gap height={15} />
-        {CityList && (
-          <Picker
-            items={CityList}
-            onValueChange={(s) => setCity(s)}
-            selectedValue={City}
-            iconName="user"
-            enabled={Prov ? true : false}
-          />
-        )}
-        <Gap height={15} />
-
-        <Button
-          prior="secondary"
-          title="Register"
-          width={250}
-          onpress={() => registerFunc()}
-        />
-        <Gap height={15} />
-      </View>
+      <Button
+        prior="primary"
+        title="Register"
+        onpress={() => registerFunc()}
+      />
+      <Gap height={15} />
     </View>
   );
 }
@@ -144,21 +143,25 @@ function register({navigation, firebase}) {
 export default withFirebase(register);
 
 const styles = StyleSheet.create({
-  container: {
+  formContainer: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  formContainer: {
     alignItems: 'center',
-    marginHorizontal: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    borderWidth: 0.2,
+    marginHorizontal: 16,
     borderRadius: 10,
   },
-
   textError: {
     color: 'red',
+  },
+  title:{
+    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  subTitle: {
+    marginBottom : 16,
+    color: 'grey',
+    fontSize: 13,
+    textAlign: 'center',
   },
 });

@@ -22,7 +22,7 @@ function login({navigation, firebase}) {
 
   const loginFunc = async () => {
     if (Email == null || Password == null) {
-      setError('Please Fill Username & Password');
+      setError('Email & Password tidak boleh kosong!');
     } else {
       try {
         const authStatus = await firebase.doAuthLoginUser(
@@ -31,7 +31,7 @@ function login({navigation, firebase}) {
         );
         const myRole = authStatus;
         if (!myRole.exists) {
-          setError('Username of Password is incorrect');
+          setError('Email of Password is incorrect');
         } else {
           dispatch({type: 'LOGINADMINUSER', payload: myRole.data().role});
         }
@@ -42,46 +42,44 @@ function login({navigation, firebase}) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.textError}>{Error} </Text>
-        {/* <Gap height={15} /> */}
-        <InputText
-          type="text"
-          placeholder="username"
-          iconName="user"
-          onChangeText={(mail) => setEmail(mail)}
-        />
-        <Gap height={15} />
-        <InputText
-          type="password"
-          placeholder="password"
-          iconName="lock"
-          onChangeText={(pass) => setPassword(pass)}
-        />
-        <Gap height={15} />
-        <Button
-          prior="primary"
-          title="Login"
-          width={250}
-          onpress={() => loginFunc()}
-        />
+    <View style={styles.formContainer}>
+      <Text style={styles.title}>Silahkan Login dulu!</Text>
+      <Text style={styles.subTitle}>Isi form login agar kamu dapat terhubung dengan akunmu</Text>
+      <Text style={styles.textError}>{Error} </Text>
+      {/* <Gap height={15} /> */}
+      <InputText
+        type="text"
+        placeholder="email"
+        iconName="user"
+        onChangeText={(mail) => setEmail(mail)}
+      />
+      <Gap height={15} />
+      <InputText
+        type="password"
+        placeholder="password"
+        iconName="lock"
+        onChangeText={(pass) => setPassword(pass)}
+      />
+      <Gap height={15} />
+      <Button
+        prior="primary"
+        title="Login"
+        onpress={() => loginFunc()}
+      />
 
-        <Gap height={15} />
-        <Link
-          onPress={() => navigation.push('forgot')}
-          text={'Forgotten Password ?'}
-        />
-        <Gap height={15} />
-        <View style={{height: 1, backgroundColor: '#a0a0a0', width: 300}} />
-        <Gap height={15} />
-        <Button
-          prior="secondary"
-          title="Register"
-          width={150}
-          onpress={() => navigation.push('register')}
-        />
-      </View>
+      <Gap height={15} />
+      <Link
+        onPress={() => navigation.push('forgot')}
+        text={'Lupa Password ?'}
+      />
+      <Gap height={15} />
+      <View style={{height: 1, backgroundColor: '#a0a0a0', alignSelf: 'stretch'}} />
+      <Gap height={15} />
+      <Button
+        prior="secondary"
+        title="Register"
+        onpress={() => navigation.push('register')}
+      />
     </View>
   );
 }
@@ -89,19 +87,24 @@ function login({navigation, firebase}) {
 export default withFirebase(login);
 
 const styles = StyleSheet.create({
-  container: {
+  formContainer: {
     flex: 1,
     justifyContent: 'center',
-  },
-  formContainer: {
     alignItems: 'center',
-    marginHorizontal: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    borderWidth: 0.2,
-    borderRadius: 10,
+    marginHorizontal: 16,
   },
   textError: {
     color: 'red',
+  },
+  title:{
+    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  subTitle: {
+    marginBottom : 16,
+    color: 'grey',
+    fontSize: 13,
+    textAlign: 'center',
   },
 });
