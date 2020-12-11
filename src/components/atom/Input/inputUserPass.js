@@ -21,7 +21,7 @@ export default function inputUserPass({
 
   return (
     <View style={styles.inputStyleContainer}>
-      <Icon name={iconName} size={20} style={{paddingHorizontal: 5}} />
+      <Icon name={iconName} size={20} style={{paddingHorizontal: 8}} />
       <TextInput
         placeholder={placeholder}
         secureTextEntry={type === 'password' && !Visible}
@@ -46,11 +46,13 @@ inputUserPass.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  inputStyle: {flex: 1},
+  inputStyle: {
+    flex: 1,
+  },
   inputStyleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: 10,
-    borderWidth: 0.4,
+    backgroundColor: '#EAEAEA'
   },
 });

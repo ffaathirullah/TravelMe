@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: 10,
-    borderWidth: 0.4,
     alignSelf: 'stretch',
+    backgroundColor: '#EAEAEA'
   },
   pickerStyle: {
     flex: 1,
