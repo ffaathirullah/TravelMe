@@ -13,7 +13,7 @@ import {withFirebase} from '../firebase/firebaseContext';
 
 const MainUser = createBottomTabNavigator();
 
-function mainUser({firebase}) {
+function mainUser({firebase, navigation}) {
   const myUid = authFirebase().currentUser.uid;
 
   const dispatch = useDispatch();
@@ -55,6 +55,19 @@ function mainUser({firebase}) {
       dispatch({type: 'NULLMYAREADEST'});
     };
   }, []);
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () =>
+      firebase
+        .doGetCurrentUserInfo(myUid)
+        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
+    );
+
+    return () => {
+      subscribe;
+      dispatch({type: 'NULLMYSTATUS'});
+    };
+  }, [navigation]);
 
   return (
     <MainUser.Navigator

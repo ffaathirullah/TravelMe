@@ -36,13 +36,11 @@ function index({firebase}) {
             <Stack.Screen name="listScreen" component={listScreen} />
             <Stack.Screen name="listDetail" component={listDetail} />
             <Stack.Screen name="listGuide" component={listGuide} />
+            <Stack.Screen name="setting" component={settingScreen} />
             <Stack.Screen
               name="seekGuideProfile"
               component={seekGuideProfile}
             />
-            {/* <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
-            <Stack.Screen name="SelesaiRoute" component={SelesaiRoute} />
-            <Stack.Screen name="pesananRouter" component={pesananRouter} /> */}
           </>
         ) : myRole == 'admin' ? (
           <Stack.Screen name="admin" component={mainAdmin} />

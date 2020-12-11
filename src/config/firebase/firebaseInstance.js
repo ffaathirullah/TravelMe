@@ -256,22 +256,38 @@ export default class Firebase {
     } catch (error) {}
   };
 
+  doGuideAcceptRequest = async (myUID, otherUID) => {
+    await this.db
+      .collection('user')
+      .doc(myUID)
+      .collection('myRequest')
+      .doc(otherUID)
+      .update({status: 'accepted'});
+
+    await this.db
+      .collection('user')
+      .doc(otherUID)
+      .collection('myRequest')
+      .doc(myUID)
+      .update({status: 'accepted'});
+  };
+
   //! USER //! USER //! USER //! USER //! USER //! USER
-  doUserReqGuide = async (myUID, gUID, placeUID, date) => {
+  doUserReqGuide = async (myUID, gUID, prov, city, placeUID, date) => {
     try {
       await this.db
         .collection('user')
         .doc(myUID)
         .collection('myRequest')
         .doc(gUID)
-        .set({status: 'request', uidGuide: gUID, date, placeUID});
+        .set({status: 'request', uidGuide: gUID, date, prov, city, placeUID});
 
       await this.db
         .collection('user')
         .doc(gUID)
         .collection('myRequest')
         .doc(myUID)
-        .set({status: 'request', uidGuide: myUID, date, placeUID});
+        .set({status: 'request', uidGuide: myUID, date, prov, city, placeUID});
 
       return 'succed';
     } catch (error) {
@@ -297,25 +313,25 @@ export default class Firebase {
     } catch (error) {}
   };
 
-  doUserOrderToHistoryGuide = async (myUID, gUID, status) => {
+  doUserOrderToHistoryGuide = async (myUID, otherUID, status) => {
     try {
       const getDataReq = await this.db
         .collection('user')
         .doc(myUID)
         .collection('myRequest')
-        .doc(gUID)
+        .doc(otherUID)
         .get();
 
       await this.db
         .collection('user')
         .doc(myUID)
         .collection('myRequest')
-        .doc(gUID)
+        .doc(otherUID)
         .delete();
 
       await this.db
         .collection('user')
-        .doc(gUID)
+        .doc(otherUID)
         .collection('myRequest')
         .doc(myUID)
         .delete();
@@ -327,7 +343,7 @@ export default class Firebase {
 
       await this.db
         .collection('user')
-        .doc(gUID)
+        .doc(otherUID)
         .collection('myHistory')
         .add({...getDataReq.data(), status: status});
 
@@ -439,6 +455,21 @@ export default class Firebase {
       return {...data.data(), id: data.id};
     } catch (error) {
       return error;
+    }
+  };
+
+  doGetPlaceDetail = async (prov, city, idPlace) => {
+    try {
+      const data = await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(idPlace)
+        .get();
+
+      return data.data();
+    } catch (error) {
+      return {};
     }
   };
 

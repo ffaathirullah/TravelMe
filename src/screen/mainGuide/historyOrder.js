@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
-import {Gap} from '../../../components';
-import {withFirebase} from '../../../config/firebase/firebaseContext';
-import fireStore from '@react-native-firebase/firestore';
+import {withFirebase} from '../../config/firebase/firebaseContext';
 import auth from '@react-native-firebase/auth';
+import {Gap} from '../../components';
 
 const renderDate = (date) => {
   const minute = date.getMinutes() + 1;
@@ -18,33 +15,25 @@ const renderDate = (date) => {
   return format;
 };
 
-const ItemRender = ({item, firebase, index}) => {
+const ItemRender = ({item, firebase}) => {
   const [guideInfo, setGuideInfo] = useState({});
-  const [requestStatus, setRequestStatus] = useState({});
+  const [placeInfo, setPlaceInfo] = useState({});
 
-  const myRequest = useSelector((state) => state.myRequest);
   const myUid = auth().currentUser.uid;
 
   const itemDate = new Date(item.date);
 
   const historyDate = renderDate(itemDate);
 
-  // const subscribePath = fireStore()
-  //   .collection('user')
-  //   .doc(myUid)
-  //   .collection('myHistory')
-  //   .doc(item.uidGuide);
+  console.log(placeInfo);
 
   useEffect(() => {
     firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
+    firebase
+      .doGetPlaceDetail(item.prov, item.city, item.placeUID)
+      .then((a) => setPlaceInfo(a));
 
-    // const subscribe = subscribePath.onSnapshot((doc) =>
-    //   setRequestStatus(doc.data()),
-    // );
-
-    return () => {
-      // subscribe;
-    };
+    return () => {};
   }, []);
 
   return (
@@ -63,7 +52,11 @@ const ItemRender = ({item, firebase, index}) => {
       }}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={{uri: guideInfo?.profileImage}}
+          source={
+            placeInfo.photo
+              ? {uri: placeInfo.photo[0]}
+              : require('../../assets/png/dummyPemandangan.png')
+          }
           style={{height: 80, width: 80, resizeMode: 'cover', borderRadius: 25}}
         />
         <Gap width={10} />
@@ -72,13 +65,13 @@ const ItemRender = ({item, firebase, index}) => {
             style={{
               textTransform: 'capitalize',
               fontWeight: 'bold',
-              fontSize: 17,
+              fontSize: 15,
             }}>
-            {guideInfo.name}
+            {placeInfo?.name}
           </Text>
           <Gap height={10} />
-          <Text style={{textTransform: 'capitalize', fontSize: 15}}>
-            {guideInfo.city}
+          <Text style={{textTransform: 'capitalize', fontSize: 14}}>
+            oleh: {guideInfo.name}
           </Text>
         </View>
       </View>
@@ -114,39 +107,43 @@ const ItemRender = ({item, firebase, index}) => {
   );
 };
 
-function onOrder({firebase, navigation}) {
-  const [histodyData, setHistodyData] = useState([]);
+function historyOrder({navigation, firebase}) {
+  const [historyList, setHistoryList] = useState([]);
 
   const myUid = auth().currentUser.uid;
 
   useEffect(() => {
     const subscribe = navigation.addListener('focus', () =>
-      firebase.doUserGetHistory(myUid).then((a) => setHistodyData(a)),
+      firebase.doUserGetHistory(myUid).then((a) => setHistoryList(a)),
     );
+
     return () => {
       subscribe;
     };
   }, [navigation]);
 
   return (
-    <View
-      style={{
-        backgroundColor: '#fff',
-        flex: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-      }}>
+    <View style={styles.container}>
+      <Text style={{fontWeight: 'bold', fontSize: 20}}>History</Text>
+      <Gap height={20} />
       <FlatList
-        data={histodyData}
+        data={historyList}
         keyExtractor={(item) => item.date.toString()}
-        renderItem={({item, index}) => (
-          <ItemRender item={item} firebase={firebase} index={index} />
+        renderItem={({item}) => (
+          <ItemRender item={item} myUid={myUid} firebase={firebase} />
         )}
       />
     </View>
   );
 }
 
-export default withFirebase(onOrder);
+export default withFirebase(historyOrder);
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+});

@@ -17,25 +17,29 @@ import {G} from 'react-native-svg';
 const {width, height} = Dimensions.get('window');
 
 function profile({navigation, firebase}) {
-  const [Name, setName] = useState('');
-  const [Contact, setContact] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [Rating, setRating] = useState(null);
+  const userInfo = useSelector((state) => state.userInfo);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    firebase.doGetCurrentUserInfo().then((a) => {
-      setName(a.name);
-      setContact(a.contact);
-      setProfileImage(a.profileImage);
-    });
-  }, []);
+  const logoutFunc = async () => {
+    const logoutProc = await firebase.doLogout();
+    if (logoutProc == 'logout') {
+      dispatch({type: 'LOGOUTADMINUSER'});
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={{fontWeight: 'bold', fontSize: 24}}>Profile</Text>
+        <View style={styles.settingContainer}>
+          <TouchableOpacity onPress={() => navigation.push('setting')}>
+            <MaterialIcon size={24} name="settings" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => logoutFunc()}>
+            <MaterialIcon size={24} name="logout" />
+          </TouchableOpacity>
+        </View>
       </View>
       <View
         style={{
@@ -44,7 +48,11 @@ function profile({navigation, firebase}) {
           alignItems: 'center',
         }}>
         <Image
-          source={require('../../../assets/png/userDefault.png')}
+          source={
+            userInfo.profileImage
+              ? {uri: userInfo.profileImage}
+              : require('../../../assets/png/userDefault.png')
+          }
           style={{
             height: 120,
             width: 120,
@@ -55,15 +63,12 @@ function profile({navigation, firebase}) {
         <Gap height={7} />
         <Text style={{color: '#767676', fontSize: 14}}>Traveler</Text>
         <Gap height={7} />
-        <Text style={{fontWeight: 'bold', fontSize: 16}}>Fachrul Faathirullah</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>{userInfo.name}</Text>
         <Gap height={7} />
-        <Text style={{fontSize: 14}}>ffaathirullah@yahoo.co.id</Text>
+        <Text style={{fontSize: 14}}>{userInfo.email} </Text>
         <Gap height={9} />
-        <View style={{height: 70, width: 225, backgroundColor: '#F7F7F7', alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 24, fontWeight:'bold'}}>8</Text>
-        <Text style={{fontSize: 14}}>Tempat Yang dikunjungi</Text>
-        </View>
-
+        <Text style={{fontSize: 14}}>{userInfo.contact} </Text>
+        <Gap height={9} />
       </View>
       <Gap height={30} />
 
@@ -86,66 +91,69 @@ function profile({navigation, firebase}) {
           <Gap width={10} />
           <View>
             <TouchableOpacity>
-              <Text style={{ fontSize: 16}}>
-                Setel Ulang Password
-              </Text>
+              <Text style={{fontSize: 16}}>Setel Ulang Password</Text>
             </TouchableOpacity>
           </View>
         </View>
         <Gap height={5} />
-          <View
-            style={{
-              backgroundColor: '#fff',
-              left: 0,
-              right: 0,
-              height: 52,
-              paddingHorizontal: 7,
-              paddingVertical: 15,
-              elevation: 3,
-              marginVertical: 5,
-              borderRadius: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Gap width={10} />
-            <View>
-              <TouchableOpacity>
-                <Text style={{ fontSize: 16}}>
-                  Tentang Aplikasi
-                </Text>
-              </TouchableOpacity>
-            </View>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            left: 0,
+            right: 0,
+            height: 52,
+            paddingHorizontal: 7,
+            paddingVertical: 15,
+            elevation: 3,
+            marginVertical: 5,
+            borderRadius: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Gap width={10} />
+          <View>
+            <TouchableOpacity>
+              <Text style={{fontSize: 16}}>Tentang Aplikasi</Text>
+            </TouchableOpacity>
           </View>
+        </View>
         <Gap height={5} />
-          <View
-            style={{
-              backgroundColor: '#FA4F4F',
-              left: 0,
-              right: 0,
-              height: 52,
-              width: 109,
-              paddingHorizontal: 7,
-              paddingVertical: 15,
-              elevation: 3,
-              marginVertical: 5,
-              borderRadius: 10,
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 32
-            }}>
-            <Gap width={32} />
-            <View>
-              <TouchableOpacity   onPress={() => {
-                  firebase.doLogout();
-                  dispatch({type: 'LOGOUTADMINUSER'});
+        {/* <View
+          style={{
+            backgroundColor: '#FA4F4F',
+            left: 0,
+            right: 0,
+            height: 52,
+            width: 109,
+            paddingHorizontal: 7,
+            paddingVertical: 15,
+            elevation: 3,
+            marginVertical: 5,
+            borderRadius: 10,
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 32,
+          }}>
+          <Gap width={32} />
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                firebase.doLogout();
+                dispatch({type: 'LOGOUTADMINUSER'});
+              }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: 'white',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                <Text style={{ fontSize: 16, color: 'white', justifyContent: 'center', alignItems: 'center'}}>
                 Logout
-                </Text>
-              </TouchableOpacity>
-            </View>
+              </Text>
+            </TouchableOpacity>
           </View>
+        </View> */}
       </View>
     </ScrollView>
   );

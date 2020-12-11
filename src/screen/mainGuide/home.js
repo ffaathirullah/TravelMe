@@ -1,15 +1,162 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  FlatList,
+} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import auth from '@react-native-firebase/auth';
+import fireStore from '@react-native-firebase/firestore';
 
-import {Gap} from '../../components/atom';
+import {Button, Gap} from '../../components/atom';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const {width, height} = Dimensions.get('window');
 
+const ItemRenderAcc = ({item, firebase, myUid}) => {
+  return (
+    <View style={styles.cardContainer}>
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 14}}>
+          nama tempat tujuan
+        </Text>
+        <Gap height={5} />
+        <Text>oleh: nama pemesan</Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            firebase.doUserOrderToHistoryGuide(
+              myUid,
+              item.uidGuide,
+              'completed',
+            )
+          }
+          style={{
+            backgroundColor: '#2D929A',
+            height: 25,
+            width: 70,
+            borderRadius: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{color: '#fff'}}>Selesai</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const ItemRenderReq = ({item, firebase, myUid}) => {
+  const [placeInfo, setplaceInfo] = useState(null);
+  const [guideInfo, setGuideInfo] = useState(null);
+
+  useEffect(() => {
+    firebase
+      .doGetPlaceDetail(item.prov, item.city, item.placeUID)
+      .then((a) => setplaceInfo(a));
+    firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
+  }, []);
+
+  return (
+    <View style={styles.cardContainer}>
+      <View>
+        <Text style={{fontWeight: 'bold', fontSize: 14}}>
+          {placeInfo?.name}
+        </Text>
+        <Gap height={5} />
+        <Text>oleh: {guideInfo?.name}</Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() => firebase.doGuideAcceptRequest(myUid, item.uidGuide)}
+          style={{
+            backgroundColor: '#2D929A',
+            height: 25,
+            width: 70,
+            borderRadius: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text style={{color: '#fff'}}>Terima</Text>
+        </TouchableOpacity>
+        <Gap height={5} />
+        <TouchableOpacity
+          onPress={() =>
+            firebase.doUserOrderToHistoryGuide(myUid, item.uidGuide, 'rejected')
+          }
+          style={{
+            backgroundColor: '#EBEFEF',
+            height: 25,
+            width: 70,
+            borderRadius: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text>Tolak</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 function home({firebase}) {
-  const dispatch = useDispatch();
+  const [dataAcc, setDataAcc] = useState([]);
+  const [dataReq, setDataReq] = useState([]);
+
+  const myUid = auth().currentUser.uid;
+
+  const pathReq = fireStore()
+    .collection('user')
+    .doc(myUid)
+    .collection('myRequest');
+
+  useEffect(() => {
+    const subscribeAccReq = pathReq
+      .where('status', '==', 'accepted')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            setDataAcc((prevData) => [...prevData, change.doc.data()]);
+          }
+
+          if (change.type === 'removed') {
+            setDataAcc((prevData) =>
+              prevData.filter((a) => a.date != change.doc.data().date),
+            );
+          }
+        });
+      });
+
+    return () => {
+      subscribeAccReq;
+    };
+  }, []);
+
+  useEffect(() => {
+    const subscribeInReq = pathReq
+      .where('status', '==', 'request')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            setDataReq((prevData) => [...prevData, change.doc.data()]);
+          }
+
+          if (change.type === 'removed') {
+            setDataReq((prevData) =>
+              prevData.filter((a) => a.date != change.doc.data().date),
+            );
+          }
+        });
+      });
+    return () => {
+      subscribeInReq;
+    };
+  }, []);
 
   return (
     <View style={{backgroundColor: '#fff', flex: 1, paddingHorizontal: 20}}>
@@ -21,6 +168,7 @@ function home({firebase}) {
           alignItems: 'center',
         }}>
         <Text style={styles.textTravelme}>TravelMe</Text>
+
         <View
           style={{
             alignItems: 'center',
@@ -46,91 +194,27 @@ function home({firebase}) {
       <View>
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>Dalam Proses</Text>
         <Gap height={16} />
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            height: 80,
-            paddingHorizontal: 20,
-            elevation: 3,
-            borderRadius: 10,
-            backgroundColor: '#fff',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 14}}>
-              nama tempat tujuan
-            </Text>
-            <Gap height={5} />
-            <Text>oleh: nama pemesan</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#2D929A',
-                height: 25,
-                width: 70,
-                borderRadius: 5,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text style={{color: '#fff'}}>Selesai</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+
+        <FlatList
+          keyExtractor={(item) => item.date.toString()}
+          data={dataAcc}
+          renderItem={({item}) => (
+            <ItemRenderAcc item={item} firebase={firebase} myUid={myUid} />
+          )}
+        />
       </View>
       <Gap height={30} />
       <View>
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>Pesanan Baru</Text>
         <Gap height={16} />
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            height: 80,
-            backgroundColor: '#fff',
-            elevation: 3,
-            borderRadius: 10,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 20,
-            alignItems: 'center',
-          }}>
-          <View>
-            <Text style={{fontWeight: 'bold', fontSize: 14}}>
-              nama tempat tujuan
-            </Text>
-            <Gap height={5} />
-            <Text>oleh: nama pemesan</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#2D929A',
-                height: 25,
-                width: 70,
-                borderRadius: 5,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text style={{color: '#fff'}}>Terima</Text>
-            </TouchableOpacity>
-            <Gap height={5} />
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#EBEFEF',
-                height: 25,
-                width: 70,
-                borderRadius: 5,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text>Tolak</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+
+        <FlatList
+          data={dataReq}
+          keyExtractor={(item) => item.date.toString()}
+          renderItem={({item}) => (
+            <ItemRenderReq item={item} firebase={firebase} myUid={myUid} />
+          )}
+        />
       </View>
     </View>
   );
@@ -139,6 +223,20 @@ function home({firebase}) {
 export default withFirebase(home);
 
 const styles = StyleSheet.create({
+  cardContainer: {
+    left: 0,
+    right: 0,
+    height: 80,
+    paddingHorizontal: 20,
+    borderWidth: 0.2,
+    borderColor: '#000',
+    borderRadius: 10,
+    marginVertical: 7,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   textTravelme: {
     fontSize: 20,
     color: '#2D929A',

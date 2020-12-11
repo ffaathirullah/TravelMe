@@ -21,6 +21,7 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
   const date = new Date().getTime();
 
   const myRequest = useSelector((state) => state.myRequest);
+  const areaDestReducer = useSelector((state) => state.areaDestReducer);
 
   const alreadyReq = myRequest.map((item) => item.uidGuide).includes(data?.id);
 
@@ -59,7 +60,16 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
       </View>
       <View style={{alignSelf: 'center', position: 'absolute', right: 10}}>
         <TouchableOpacity
-          onPress={() => firebase.doUserReqGuide(myUid, data.id, idPlace, date)}
+          onPress={() =>
+            firebase.doUserReqGuide(
+              myUid,
+              data.id,
+              areaDestReducer.prov,
+              areaDestReducer.city,
+              idPlace,
+              date,
+            )
+          }
           disabled={alreadyReq}
           style={{
             width: 100,

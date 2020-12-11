@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList, Image} from 'react-native';
+import {StyleSheet, Text, View, FlatList, Image, Linking} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {Gap} from '../../../components';
@@ -10,6 +10,7 @@ import auth from '@react-native-firebase/auth';
 const ItemRender = ({item, firebase, index}) => {
   const [guideInfo, setGuideInfo] = useState({});
   const [requestStatus, setRequestStatus] = useState({});
+  const [placeInfo, setPlaceInfo] = useState(null);
 
   const myRequest = useSelector((state) => state.myRequest);
   const myUid = auth().currentUser.uid;
@@ -25,6 +26,10 @@ const ItemRender = ({item, firebase, index}) => {
   };
 
   useEffect(() => {
+    firebase
+      .doGetPlaceDetail(item.prov, item.city, item.placeUID)
+      .then((a) => setPlaceInfo(a));
+
     firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
 
     const subscribe = subscribePath.onSnapshot((doc) =>
@@ -42,7 +47,7 @@ const ItemRender = ({item, firebase, index}) => {
         backgroundColor: '#fff',
         paddingVertical: 10,
         paddingHorizontal: 10,
-        // justifyContent: 'center',
+        marginVertical: 10,
         left: 0,
         right: 0,
         borderColor: '#000',
@@ -57,8 +62,10 @@ const ItemRender = ({item, firebase, index}) => {
         />
         <Gap width={10} />
         <View>
-          <Text>{guideInfo.name}</Text>
-          <Gap height={10} />
+          <Text style={{fontWeight: 'bold'}}>{guideInfo?.name}</Text>
+          <Gap height={5} />
+          <Text>{placeInfo?.name} </Text>
+          <Gap height={5} />
           <Text style={{textTransform: 'capitalize'}}>
             {myRequest[index]?.status == 'request'
               ? 'Menunggu konfirmasi'
@@ -76,9 +83,11 @@ const ItemRender = ({item, firebase, index}) => {
           alignItems: 'center',
         }}>
         <TouchableOpacity
-          // disabled={myRequest[index].status == 'request'}
-          // onPress={() => console.log(myStat)}
-          // onPress={() => console.log(myRequest[index].status)}
+          onPress={() =>
+            Linking.openURL(
+              `whatsapp://send?text=hello&phone=62${guideInfo.contact}`,
+            )
+          }
           style={{
             height: 30,
             alignItems: 'center',
