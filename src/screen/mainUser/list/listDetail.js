@@ -31,6 +31,8 @@ function listDetail({route, firebase, navigation}) {
   const [state, setState] = useState({
     selectedIndex: 0,
   });
+
+  console.log('dataPlace', data);
   scrollRef = React.createRef();
   const {selectedIndex} = state;
 
@@ -47,8 +49,8 @@ function listDetail({route, firebase, navigation}) {
   useEffect(() => {
     firebase
       .doGetListGuide(areaDest.prov, areaDest.city, data.id)
-      .then((data) => {
-        setGuideList(data);
+      .then((datas) => {
+        setGuideList(datas);
       });
   }, []);
 
@@ -171,7 +173,9 @@ function listDetail({route, firebase, navigation}) {
           <Text style={styles.txtPeta}>Peta</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => navigation.push('listGuide', {data: guideList})}
+          onPress={() =>
+            navigation.push('listGuide', {data: guideList, idPlace: data.id})
+          }
           style={styles.jasaTour}>
           <Text style={styles.txtJasaTour}>Pesan Jasa Tour Guide</Text>
         </TouchableOpacity>

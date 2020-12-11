@@ -9,11 +9,20 @@ import {
 } from 'react-native';
 
 import StarRating from 'react-native-star-rating';
+import {useSelector} from 'react-redux';
 import {Gap} from '../../../components';
 import {withFirebase} from '../../../config/firebase/firebaseContext';
 
-const ItemRender = ({item, firebase, navigation}) => {
+import auth from '@react-native-firebase/auth';
+
+const ItemRender = ({item, firebase, navigation, idPlace}) => {
   const [data, setData] = useState(null);
+  const myUid = auth().currentUser.uid;
+  const date = new Date().getTime();
+
+  const myRequest = useSelector((state) => state.myRequest);
+
+  const alreadyReq = myRequest.map((item) => item.uidGuide).includes(data?.id);
 
   useEffect(() => {
     firebase.doGetCurrentUserInfo(item.uid).then((a) => setData(a));
@@ -50,15 +59,17 @@ const ItemRender = ({item, firebase, navigation}) => {
       </View>
       <View style={{alignSelf: 'center', position: 'absolute', right: 10}}>
         <TouchableOpacity
+          onPress={() => firebase.doUserReqGuide(myUid, data.id, idPlace, date)}
+          disabled={alreadyReq}
           style={{
             width: 100,
-            backgroundColor: '#2D929A',
+            backgroundColor: alreadyReq ? '#909090' : '#2D929A',
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 10,
           }}>
           <Text numberOfLines={2} style={{textAlign: 'center', color: '#fff'}}>
-            Kirim Permintaan
+            {alreadyReq ? 'Permintaan Terkirim' : 'Kirim Permintaan'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -67,7 +78,7 @@ const ItemRender = ({item, firebase, navigation}) => {
 };
 
 function listGuide({route, firebase, navigation}) {
-  const data = route.params?.data;
+  const {data, idPlace} = route.params;
   return (
     <View
       style={{
@@ -84,7 +95,12 @@ function listGuide({route, firebase, navigation}) {
         keyExtractor={(item, idx) => idx.toString()}
         data={data}
         renderItem={({item}) => (
-          <ItemRender item={item} firebase={firebase} navigation={navigation} />
+          <ItemRender
+            item={item}
+            firebase={firebase}
+            navigation={navigation}
+            idPlace={idPlace}
+          />
         )}
       />
     </View>

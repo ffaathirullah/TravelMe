@@ -24,12 +24,6 @@ function mainGuide({firebase, navigation}) {
     .collection('workPlace');
 
   useEffect(() => {
-    const subscribe = navigation.addListener('focus', () =>
-      firebase
-        .doGetCurrentUserInfo(myUid)
-        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
-    );
-
     const getWorkPath = placeWorkPath.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
@@ -42,16 +36,24 @@ function mainGuide({firebase, navigation}) {
       });
     });
 
-    // firebase
-    //   .doGetCurrentUserInfo()
-    //   .then((a) => dispatch({type: 'MYSTATUS', payload: a}));
     return () => {
-      subscribe;
       getWorkPath;
-      dispatch({type: 'NULLMYSTATUS'});
       dispatch({type: 'NULLWORKPLACE'});
     };
   }, []);
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () =>
+      firebase
+        .doGetCurrentUserInfo(myUid)
+        .then((a) => dispatch({type: 'MYSTATUS', payload: a})),
+    );
+
+    return () => {
+      subscribe;
+      dispatch({type: 'NULLMYSTATUS'});
+    };
+  }, [navigation]);
 
   return (
     <Guide.Navigator

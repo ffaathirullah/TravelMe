@@ -279,7 +279,25 @@ export default class Firebase {
     }
   };
 
-  doUserOrderHistoryGuide = async (myUID, gUID, status) => {
+  doUserGetHistory = async (myUid) => {
+    try {
+      const data = await this.db
+        .collection('user')
+        .doc(myUid)
+        .collection('myHistory')
+        .get();
+
+      let list = [];
+
+      data.forEach((a) => {
+        list.push(a.data());
+      });
+
+      return list;
+    } catch (error) {}
+  };
+
+  doUserOrderToHistoryGuide = async (myUID, gUID, status) => {
     try {
       const getDataReq = await this.db
         .collection('user')
@@ -291,18 +309,6 @@ export default class Firebase {
       await this.db
         .collection('user')
         .doc(myUID)
-        .collection('myHistory')
-        .add({...getDataReq.data(), status});
-
-      await this.db
-        .collection('user')
-        .doc(gUID)
-        .collection('myHistory')
-        .add({...getDataReq.data(), status});
-
-      await this.db
-        .collection('user')
-        .doc(myUID)
         .collection('myRequest')
         .doc(gUID)
         .delete();
@@ -313,6 +319,17 @@ export default class Firebase {
         .collection('myRequest')
         .doc(myUID)
         .delete();
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myHistory')
+        .add({...getDataReq.data(), status: status});
+
+      await this.db
+        .collection('user')
+        .doc(gUID)
+        .collection('myHistory')
+        .add({...getDataReq.data(), status: status});
 
       return 'succed';
     } catch (error) {
