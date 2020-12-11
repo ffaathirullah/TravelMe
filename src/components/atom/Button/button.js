@@ -22,16 +22,20 @@ button.propTypes = {
 
 const styles = StyleSheet.create({
   button: (type) => ({
-    backgroundColor: type === 'primary' ? colors.primary : colors.secondary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-    jusctifyContent: 'center',
+    backgroundColor: type === 'primary' ? '#2D929A' : '#F1F1F1',
+    borderWidth: 1,
+    padding: 8,
+    borderColor: '#2D929A',
+    borderRadius: 10,
     alignItems: 'center',
+    alignSelf: 'stretch',
+    height: 48
   }),
   text: (type) => ({
-    color: '#fff',
+    color: type === 'primary' ? 'white' : '#2D929A',
     fontSize: type === 'primary' ? 20 : 18,
     fontWeight: type === 'primary' ? 'bold' : '400',
+    textAlign: 'center',
+    textAlignVertical: 'center',
   }),
 });
