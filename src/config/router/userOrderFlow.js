@@ -2,7 +2,6 @@ import React from 'react';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
-import declineOrder from '../../screen/mainUser/order/declineOrder';
 import onOrder from '../../screen/mainUser/order/onOrder';
 import historyOrder from '../../screen/mainUser/order/historyOrder';
 

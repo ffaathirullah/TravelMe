@@ -4,6 +4,7 @@ import auth, {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import Axios from 'axios';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 // import {connect} from 'react-redux';
 
 // import {doAuthLogout} from '../redux/action/authAction';
@@ -280,14 +281,14 @@ export default class Firebase {
         .doc(myUID)
         .collection('myRequest')
         .doc(gUID)
-        .set({status: 'request', uidGuide: gUID, date, prov, city, placeUID});
+        .set({status: 'request', otherUid: gUID, date, prov, city, placeUID});
 
       await this.db
         .collection('user')
         .doc(gUID)
         .collection('myRequest')
         .doc(myUID)
-        .set({status: 'request', uidGuide: myUID, date, prov, city, placeUID});
+        .set({status: 'request', otherUid: myUID, date, prov, city, placeUID});
 
       return 'succed';
     } catch (error) {
@@ -306,7 +307,7 @@ export default class Firebase {
       let list = [];
 
       data.forEach((a) => {
-        list.push(a.data());
+        list.push({...a.data(), idHistory: a.id});
       });
 
       return list;
@@ -315,11 +316,18 @@ export default class Firebase {
 
   doUserOrderToHistoryGuide = async (myUID, otherUID, status) => {
     try {
-      const getDataReq = await this.db
+      const getDataReqUserPerc = await this.db
         .collection('user')
         .doc(myUID)
         .collection('myRequest')
         .doc(otherUID)
+        .get();
+
+      const getDataReqGuidePerc = await this.db
+        .collection('user')
+        .doc(otherUID)
+        .collection('myRequest')
+        .doc(myUID)
         .get();
 
       await this.db
@@ -335,19 +343,64 @@ export default class Firebase {
         .collection('myRequest')
         .doc(myUID)
         .delete();
+
       await this.db
         .collection('user')
         .doc(myUID)
         .collection('myHistory')
-        .add({...getDataReq.data(), status: status});
+        .add({...getDataReqUserPerc.data(), status: status});
 
       await this.db
         .collection('user')
         .doc(otherUID)
         .collection('myHistory')
-        .add({...getDataReq.data(), status: status});
+        .add({...getDataReqGuidePerc.data(), status: status});
 
       return 'succed';
+    } catch (error) {
+      return 'error';
+    }
+  };
+
+  doUserGiveReview = async (
+    myUID,
+    otherUID,
+    placeUID,
+    prov,
+    city,
+    messageGuide,
+    rateGuide,
+    messagePlace,
+    ratePlace,
+    idHistory,
+  ) => {
+    try {
+      await this.db
+        .collection('user')
+        .doc(otherUID)
+        .collection('myReview')
+        .doc(myUID)
+        .set({sender: myUID, message: messageGuide, rate: rateGuide});
+
+      await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(placeUID)
+        .collection('review')
+        .doc(myUID)
+        .set({
+          sender: myUID,
+          message: messagePlace,
+          rate: ratePlace,
+        });
+
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myHistory')
+        .doc(idHistory)
+        .update({review: true});
     } catch (error) {
       return 'error';
     }

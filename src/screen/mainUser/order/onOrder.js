@@ -19,18 +19,20 @@ const ItemRender = ({item, firebase, index}) => {
     .collection('user')
     .doc(myUid)
     .collection('myRequest')
-    .doc(item.uidGuide);
+    .doc(item.otherUid);
 
   const cancelFunc = async () => {
-    await firebase.doUserOrderToHistoryGuide(myUid, item.uidGuide, 'cancel');
+    await firebase.doUserOrderToHistoryGuide(myUid, item.otherUid, 'cancel');
   };
+
+  console.log('item', item);
 
   useEffect(() => {
     firebase
       .doGetPlaceDetail(item.prov, item.city, item.placeUID)
       .then((a) => setPlaceInfo(a));
 
-    firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
+    firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
 
     const subscribe = subscribePath.onSnapshot((doc) =>
       setRequestStatus(doc.data()),
@@ -133,7 +135,7 @@ function onOrder({firebase}) {
       }}>
       <FlatList
         data={myRequest}
-        keyExtractor={(item) => item.uidGuide}
+        keyExtractor={(item) => item.otherUid}
         renderItem={({item, index}) => (
           <ItemRender item={item} firebase={firebase} index={index} />
         )}

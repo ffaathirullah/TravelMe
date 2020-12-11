@@ -18,49 +18,25 @@ const renderDate = (date) => {
   return format;
 };
 
-const ItemRender = ({item, firebase, index}) => {
+const ItemRender = ({item, firebase, navigation}) => {
   const [guideInfo, setGuideInfo] = useState({});
   const [requestStatus, setRequestStatus] = useState({});
 
-  const myRequest = useSelector((state) => state.myRequest);
-  const myUid = auth().currentUser.uid;
-
   const itemDate = new Date(item.date);
+
+  console.log('item', item);
 
   const historyDate = renderDate(itemDate);
 
-  // const subscribePath = fireStore()
-  //   .collection('user')
-  //   .doc(myUid)
-  //   .collection('myHistory')
-  //   .doc(item.uidGuide);
-
   useEffect(() => {
-    firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
-
-    // const subscribe = subscribePath.onSnapshot((doc) =>
-    //   setRequestStatus(doc.data()),
-    // );
-
-    return () => {
-      // subscribe;
-    };
+    firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
   }, []);
 
   return (
-    <View
-      style={{
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        marginVertical: 10,
-        left: 0,
-        right: 0,
-        borderColor: '#000',
-        borderWidth: 0.2,
-        borderRadius: 10,
-        flexDirection: 'row',
-      }}>
+    <TouchableOpacity
+      onPress={() => navigation.push('reviewServices', {data: item, guideInfo})}
+      disabled={item.status != 'completed'}
+      style={styles.cardContainer}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
           source={{uri: guideInfo?.profileImage}}
@@ -110,7 +86,7 @@ const ItemRender = ({item, firebase, index}) => {
           {item.status}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -138,9 +114,14 @@ function onOrder({firebase, navigation}) {
       }}>
       <FlatList
         data={histodyData}
-        keyExtractor={(item) => item.date.toString()}
+        keyExtractor={(item) => item?.date?.toString()}
         renderItem={({item, index}) => (
-          <ItemRender item={item} firebase={firebase} index={index} />
+          <ItemRender
+            navigation={navigation}
+            item={item}
+            firebase={firebase}
+            index={index}
+          />
         )}
       />
     </View>
@@ -149,4 +130,17 @@ function onOrder({firebase, navigation}) {
 
 export default withFirebase(onOrder);
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  cardContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    left: 0,
+    right: 0,
+    borderColor: '#000',
+    borderWidth: 0.2,
+    borderRadius: 10,
+    flexDirection: 'row',
+  },
+});

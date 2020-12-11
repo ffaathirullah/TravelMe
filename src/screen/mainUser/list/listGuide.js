@@ -23,7 +23,8 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
   const myRequest = useSelector((state) => state.myRequest);
   const areaDestReducer = useSelector((state) => state.areaDestReducer);
 
-  const alreadyReq = myRequest.map((item) => item.uidGuide).includes(data?.id);
+  const alreadyReq =
+    data && myRequest.map((item) => item.otherUid).includes(data?.id);
 
   useEffect(() => {
     firebase.doGetCurrentUserInfo(item.uid).then((a) => setData(a));
@@ -89,6 +90,7 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
 
 function listGuide({route, firebase, navigation}) {
   const {data, idPlace} = route.params;
+
   return (
     <View
       style={{
@@ -102,14 +104,14 @@ function listGuide({route, firebase, navigation}) {
       </Text>
       <Gap height={20} />
       <FlatList
-        keyExtractor={(item, idx) => idx.toString()}
+        keyExtractor={(item) => item.uid}
         data={data}
         renderItem={({item}) => (
           <ItemRender
             item={item}
+            idPlace={idPlace}
             firebase={firebase}
             navigation={navigation}
-            idPlace={idPlace}
           />
         )}
       />

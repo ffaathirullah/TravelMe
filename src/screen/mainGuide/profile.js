@@ -43,7 +43,6 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
           right: 7,
           paddingHorizontal: 10,
           paddingVertical: 10,
-          backgroundColor: 'red',
         }}>
         <FeatherIcon name="trash" size={20} />
       </TouchableOpacity>

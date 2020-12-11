@@ -32,7 +32,6 @@ function listDetail({route, firebase, navigation}) {
     selectedIndex: 0,
   });
 
-  console.log('dataPlace', data);
   scrollRef = React.createRef();
   const {selectedIndex} = state;
 

@@ -32,7 +32,7 @@ const ItemRenderAcc = ({item, firebase, myUid}) => {
           onPress={() =>
             firebase.doUserOrderToHistoryGuide(
               myUid,
-              item.uidGuide,
+              item.otherUid,
               'completed',
             )
           }
@@ -73,7 +73,7 @@ const ItemRenderReq = ({item, firebase, myUid}) => {
       </View>
       <View>
         <TouchableOpacity
-          onPress={() => firebase.doGuideAcceptRequest(myUid, item.uidGuide)}
+          onPress={() => firebase.doGuideAcceptRequest(myUid, item.otherUid)}
           style={{
             backgroundColor: '#2D929A',
             height: 25,
@@ -87,7 +87,7 @@ const ItemRenderReq = ({item, firebase, myUid}) => {
         <Gap height={5} />
         <TouchableOpacity
           onPress={() =>
-            firebase.doUserOrderToHistoryGuide(myUid, item.uidGuide, 'rejected')
+            firebase.doUserOrderToHistoryGuide(myUid, item.otherUid, 'rejected')
           }
           style={{
             backgroundColor: '#EBEFEF',

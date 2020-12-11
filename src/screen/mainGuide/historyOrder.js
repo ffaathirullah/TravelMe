@@ -28,7 +28,7 @@ const ItemRender = ({item, firebase}) => {
   console.log(placeInfo);
 
   useEffect(() => {
-    firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
+    firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
     firebase
       .doGetPlaceDetail(item.prov, item.city, item.placeUID)
       .then((a) => setPlaceInfo(a));

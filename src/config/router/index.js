@@ -18,6 +18,7 @@ import listScreen from '../../screen/mainUser/list/listScreen';
 import listDetail from '../../screen/mainUser/list/listDetail';
 import listGuide from '../../screen/mainUser/list/listGuide';
 import seekGuideProfile from '../../screen/mainUser/profile/seekGuideProfile';
+import reviewServices from '../../screen/mainUser/order/reviewServices';
 
 const Stack = createStackNavigator();
 function index({firebase}) {
@@ -34,6 +35,7 @@ function index({firebase}) {
           <>
             <Stack.Screen name="user" component={mainUser} />
             <Stack.Screen name="listScreen" component={listScreen} />
+            <Stack.Screen name="reviewServices" component={reviewServices} />
             <Stack.Screen name="listDetail" component={listDetail} />
             <Stack.Screen name="listGuide" component={listGuide} />
             <Stack.Screen name="setting" component={settingScreen} />
