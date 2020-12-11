@@ -40,9 +40,9 @@ function index({firebase}) {
               name="seekGuideProfile"
               component={seekGuideProfile}
             />
-            <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
+            {/* <Stack.Screen name="dibatalkanRoute" component={dibatalkanRoute} />
             <Stack.Screen name="SelesaiRoute" component={SelesaiRoute} />
-            <Stack.Screen name="pesananRouter" component={pesananRouter} />
+            <Stack.Screen name="pesananRouter" component={pesananRouter} /> */}
           </>
         ) : myRole == 'admin' ? (
           <Stack.Screen name="admin" component={mainAdmin} />

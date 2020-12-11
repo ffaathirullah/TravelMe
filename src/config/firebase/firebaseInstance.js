@@ -256,6 +256,70 @@ export default class Firebase {
     } catch (error) {}
   };
 
+  //! USER //! USER //! USER //! USER //! USER //! USER
+  doUserReqGuide = async (myUID, gUID, placeUID, date) => {
+    try {
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myRequest')
+        .doc(gUID)
+        .set({status: 'request', uidGuide: gUID, date, placeUID});
+
+      await this.db
+        .collection('user')
+        .doc(gUID)
+        .collection('myRequest')
+        .doc(myUID)
+        .set({status: 'request', uidGuide: myUID, date, placeUID});
+
+      return 'succed';
+    } catch (error) {
+      return 'error';
+    }
+  };
+
+  doUserOrderHistoryGuide = async (myUID, gUID, status) => {
+    try {
+      const getDataReq = await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myRequest')
+        .doc(gUID)
+        .get();
+
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myHistory')
+        .add({...getDataReq.data(), status});
+
+      await this.db
+        .collection('user')
+        .doc(gUID)
+        .collection('myHistory')
+        .add({...getDataReq.data(), status});
+
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myRequest')
+        .doc(gUID)
+        .delete();
+
+      await this.db
+        .collection('user')
+        .doc(gUID)
+        .collection('myRequest')
+        .doc(myUID)
+        .delete();
+
+      return 'succed';
+    } catch (error) {
+      return 'error';
+    }
+  };
+
   //! ADMIN //! ADMIN //! ADMIN //! ADMIN //! ADMIN
 
   doAdminGetRequestLocation = async () => {
