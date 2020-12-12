@@ -47,10 +47,6 @@ function Hutan_Raya1() {
               terpadu antara alam sekunder dengan hutan tanaman dengan jenis Pinus
               yang terletak di Sub-Daerah Aliran Sungai Cikapundung dan DAS
             </Text>
-            <TouchableOpacity style={styles.selengkapnya}>
-              <Text>Selengkapnya</Text>
-              <Icon_Bawah />
-            </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>

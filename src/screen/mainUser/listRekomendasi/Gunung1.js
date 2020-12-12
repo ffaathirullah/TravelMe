@@ -48,10 +48,6 @@ function Gunung1() {
               yang merupakan salah satu tempat wisata alam yang wajib Anda
               kunjungi
             </Text>
-            <TouchableOpacity style={styles.selengkapnya}>
-              <Text>Selengkapnya</Text>
-              <Icon_Bawah />
-            </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>

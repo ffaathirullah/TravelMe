@@ -46,10 +46,6 @@ function Air_Terjun1() {
               Curug Dago adalah jejak keindahan Bandung pada masa Hindia Belanda.
               Abad ke-20, air terjun setinggi 15 meter ini kesohor akan keindahan alamnya
             </Text>
-            <TouchableOpacity style={styles.selengkapnya}>
-              <Text>Selengkapnya</Text>
-              <Icon_Bawah />
-            </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>

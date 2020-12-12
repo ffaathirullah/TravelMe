@@ -93,7 +93,7 @@ const LocationModal = ({
         }}>
         <View
           style={{
-            width: 300,
+            width: 400,
             paddingHorizontal: 20,
             paddingTop: 20,
             paddingVertical: 10,

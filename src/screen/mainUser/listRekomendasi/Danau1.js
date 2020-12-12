@@ -49,10 +49,6 @@ function Danau1() {
             Jawa Barat. Tidak sedikit yang berkunjung namun suasananya memang membuat
             hati menjadi tenang.
             </Text>
-            <TouchableOpacity style={styles.selengkapnya}>
-              <Text>Selengkapnya</Text>
-              <Icon_Bawah />
-            </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>
