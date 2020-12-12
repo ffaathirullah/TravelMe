@@ -39,7 +39,9 @@ const ItemReview = ({item, firebase}) => {
         borderRadius: 10,
       }}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Text style={{fontWeight: 'bold', fontSize: 16}}>senderInfo.name</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>
+          {senderInfo.name}
+        </Text>
         <Text>20/10/2020</Text>
       </View>
       <StarRating
