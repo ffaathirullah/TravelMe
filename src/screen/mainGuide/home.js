@@ -59,7 +59,7 @@ const ItemRenderReq = ({item, firebase, myUid}) => {
     firebase
       .doGetPlaceDetail(item.prov, item.city, item.placeUID)
       .then((a) => setplaceInfo(a));
-    firebase.doGetCurrentUserInfo(item.uidGuide).then((a) => setGuideInfo(a));
+    firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
   }, []);
 
   return (

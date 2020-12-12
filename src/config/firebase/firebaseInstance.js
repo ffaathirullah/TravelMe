@@ -273,6 +273,24 @@ export default class Firebase {
       .update({status: 'accepted'});
   };
 
+  doGuideGetReview = async (myUID) => {
+    try {
+      const data = await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myReview')
+        .get();
+
+      let list = [];
+
+      data.forEach((doc) => {
+        list.push({...doc.data(), id: doc.id});
+      });
+
+      return list;
+    } catch (error) {}
+  };
+
   //! USER //! USER //! USER //! USER //! USER //! USER
   doUserReqGuide = async (myUID, gUID, prov, city, placeUID, date) => {
     try {

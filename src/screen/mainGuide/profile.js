@@ -15,8 +15,48 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import authFirebase from '@react-native-firebase/auth';
+import StarRating from 'react-native-star-rating';
 
 const {width, height} = Dimensions.get('window');
+
+const ItemReview = ({item, firebase}) => {
+  const [senderInfo, setSenderInfo] = useState({});
+
+  useEffect(() => {
+    firebase.doGetCurrentUserInfo(item.sender).then((a) => setSenderInfo(a));
+  }, []);
+
+  return (
+    <View
+      style={{
+        left: 0,
+        right: 0,
+        backgroundColor: '#fff',
+        paddingHorizontal: 7,
+        paddingVertical: 15,
+        elevation: 3,
+        marginVertical: 5,
+        borderRadius: 10,
+      }}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>senderInfo.name</Text>
+        <Text>20/10/2020</Text>
+      </View>
+      <StarRating
+        rating={item.rate}
+        starSize={25}
+        containerStyle={{width: 140}}
+        maxStars={5}
+        fullStarColor={'#fa2'}
+        disabled={true}
+      />
+      <Gap height={15} />
+      <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
+        {item.message}
+      </Text>
+    </View>
+  );
+};
 
 const WorkPlaceCard = ({item, prov, city, firebase}) => {
   const [Data, setData] = useState({});
@@ -28,8 +68,6 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
       .doGuideGetPlaceInfo(prov, city, item.idWorkPlace)
       .then((a) => setData(a));
   }, []);
-
-  console.log(Data);
 
   return (
     <View style={styles.workPlaceCardContainer}>
@@ -63,10 +101,14 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
 };
 
 function profile({navigation, firebase}) {
+  const [myReview, setMyReview] = useState({});
+
   const userInfo = useSelector((state) => state.userInfo);
   const workPlace = useSelector((state) => state.workPlace);
 
   const dispatch = useDispatch();
+
+  const myUid = authFirebase().currentUser.uid;
 
   const logoutFunc = async () => {
     const logoutProc = await firebase.doLogout();
@@ -74,6 +116,10 @@ function profile({navigation, firebase}) {
       dispatch({type: 'LOGOUTADMINUSER'});
     }
   };
+
+  useEffect(() => {
+    firebase.doGuideGetReview(myUid).then((a) => setMyReview(a));
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -150,53 +196,17 @@ function profile({navigation, firebase}) {
       <View style={styles.reviewContainer}>
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>Review</Text>
         <Gap height={15} />
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            backgroundColor: '#fff',
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-          }}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama pereview
-            </Text>
-            <Text>20/10/2020</Text>
-          </View>
-          <Text>Rating rating</Text>
-          <Gap height={15} />
-          <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
-            Lorem ipsum dolor sit amet.
-          </Text>
-        </View>
 
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            backgroundColor: '#fff',
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            borderRadius: 10,
-            marginVertical: 5,
-          }}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama pereview 2
-            </Text>
-            <Text>20/10/2020</Text>
-          </View>
-          <Text>Rating rating</Text>
-          <Gap height={15} />
-          <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
-            lorem 20
-          </Text>
-        </View>
+        <FlatList
+          data={myReview}
+          renderItem={({item}) => (
+            <ItemReview
+              item={item}
+              firebase={firebase}
+              keyExtractor={(item) => item.message}
+            />
+          )}
+        />
       </View>
     </ScrollView>
   );
