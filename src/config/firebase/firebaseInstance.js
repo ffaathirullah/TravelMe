@@ -391,6 +391,7 @@ export default class Firebase {
     messagePlace,
     ratePlace,
     idHistory,
+    date,
   ) => {
     try {
       await this.db
@@ -411,6 +412,7 @@ export default class Firebase {
           sender: myUID,
           message: messagePlace,
           rate: ratePlace,
+          date,
         });
 
       await this.db

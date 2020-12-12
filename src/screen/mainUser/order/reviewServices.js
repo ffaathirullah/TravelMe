@@ -21,6 +21,8 @@ function reviewServices({route, navigation, firebase}) {
   const [starGuide, setStarGuide] = useState(0);
   const [starPlace, setStarPlace] = useState(0);
 
+  const date = new Date().getTime();
+
   const {data, guideInfo} = route.params;
 
   const userInfo = useSelector((state) => state.userInfo);
@@ -38,6 +40,7 @@ function reviewServices({route, navigation, firebase}) {
         reviewPlace,
         starPlace,
         data.idHistory,
+        date,
       );
       navigation.popToTop();
     } catch (error) {}

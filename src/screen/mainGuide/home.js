@@ -110,6 +110,8 @@ function home({firebase}) {
 
   const myUid = auth().currentUser.uid;
 
+  const userInfo = useSelector((state) => state.userInfo);
+
   const pathReq = fireStore()
     .collection('user')
     .doc(myUid)
@@ -173,9 +175,10 @@ function home({firebase}) {
           style={{
             alignItems: 'center',
             flexDirection: 'row',
-            height: 40,
+
             width: 130,
             borderRadius: 10,
+            paddingVertical: 5,
             backgroundColor: 'rgba(0,0,0,.1)',
           }}>
           <Image
@@ -187,7 +190,7 @@ function home({firebase}) {
               marginHorizontal: 8,
             }}
           />
-          <Text>Text lokasi</Text>
+          <Text style={{textTransform: 'capitalize'}}>{userInfo?.city}</Text>
         </View>
       </View>
       <Gap height={35} />
