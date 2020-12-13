@@ -20,7 +20,7 @@ const ItemDestination = ({item, navigation}) => {
       onPress={() => navigation.push('listDetail', {data: item, id: item.id})}
       style={styles.itemListContainer}>
       <Image
-        source={require('../../../assets/png/dummyPemandangan.png')}
+        source={{uri: item.photo[0]}}
         style={{
           height: 80,
           width: 80,
@@ -107,7 +107,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 10,
     backgroundColor: 'white',
-    elevation: 3,
+    borderWidth: 0.2,
+
     marginTop: 18,
     alignItems: 'center',
     position: 'relative',

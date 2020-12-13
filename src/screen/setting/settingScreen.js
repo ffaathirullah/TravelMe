@@ -49,9 +49,8 @@ function settingScreen({navigation, firebase}) {
       setLoading(true);
       const fileBlob = await fetch(ImageProfile).then((a) => a.blob());
 
-      await firebase
-        .doSettingChangePhoto(fileBlob, Name, Contact, myUid)
-        .then((a) => console.log(a));
+      await firebase.doSettingChangePhoto(fileBlob, Name, Contact, myUid);
+
       setLoading(false);
       navigation.popToTop();
     } catch (error) {

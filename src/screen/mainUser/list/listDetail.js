@@ -22,8 +22,59 @@ import {
 } from '../../../assets';
 import {withFirebase} from '../../../config/firebase/firebaseContext';
 import {useSelector} from 'react-redux';
+import FAicon from 'react-native-vector-icons/FontAwesome';
+import StarRating from 'react-native-star-rating';
 
 const {height, width} = Dimensions.get('window');
+
+const ReviewCard = ({item, firebase}) => {
+  const [senderInfo, setSenderInfo] = useState({});
+
+  useEffect(() => {
+    firebase.doGetCurrentUserInfo(item.sender).then((a) => setSenderInfo(a));
+  }, []);
+
+  console.log('senderInfo', senderInfo);
+  console.log('item', item);
+
+  return (
+    <View style={{marginVertical: 8}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          elevation: 3,
+          backgroundColor: '#fff',
+          height: 80,
+          paddingVertical: 10,
+          borderRadius: 10,
+        }}>
+        <Image
+          source={require('../../../assets/png/userDefault.png')}
+          style={{
+            height: 40,
+            width: 40,
+            resizeMode: 'cover',
+            borderRadius: 20,
+            marginHorizontal: 10,
+          }}
+        />
+        <View>
+          <Text>{senderInfo.name}</Text>
+          <StarRating
+            disabled={true}
+            starSize={18}
+            containerStyle={{width: 140}}
+            maxStars={5}
+            rating={item.rate}
+            fullStarColor={'#fa2'}
+          />
+          <Text>{item.message}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 function listDetail({route, firebase, navigation}) {
   const {data} = route.params;
@@ -31,6 +82,8 @@ function listDetail({route, firebase, navigation}) {
   const [state, setState] = useState({
     selectedIndex: 0,
   });
+
+  const [reviewData, setReviewData] = useState([]);
 
   scrollRef = React.createRef();
   const {selectedIndex} = state;
@@ -51,6 +104,9 @@ function listDetail({route, firebase, navigation}) {
       .then((datas) => {
         setGuideList(datas);
       });
+    firebase
+      .doGetPlaceReview(data.prov, data.city, data.id)
+      .then((a) => setReviewData(a));
   }, []);
 
   return (
@@ -118,6 +174,11 @@ function listDetail({route, firebase, navigation}) {
                 : 'Tour Guide Tidak Tersedia'}
             </Text>
           </View>
+          <Gap height={13} />
+          <View style={styles.waktu}>
+            <FAicon name="ticket" color="#2D929A" size={17} />
+            <Text style={styles.txtFlag}>{data.price}</Text>
+          </View>
         </View>
 
         <View style={{marginHorizontal: 16}}>
@@ -132,37 +193,13 @@ function listDetail({route, firebase, navigation}) {
           <Text style={{fontSize: 20, fontWeight: 'bold'}}>
             ulasan(10 orang)
           </Text>
-          {[...Array(4)].map((item, idx) => (
-            <View key={idx}>
-              <Gap height={8} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  elevation: 3,
-                  backgroundColor: '#fff',
-                  height: 80,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../../../assets/png/userDefault.png')}
-                  style={{
-                    height: 40,
-                    width: 40,
-                    resizeMode: 'cover',
-                    borderRadius: 20,
-                    marginHorizontal: 10,
-                  }}
-                />
-                <View>
-                  <Text>nama review</Text>
-                  <Text>rating</Text>
-                  <Text>pesan</Text>
-                </View>
-              </View>
-            </View>
-          ))}
+          <FlatList
+            data={reviewData}
+            renderItem={({item}) => (
+              <ReviewCard item={item} firebase={firebase} />
+            )}
+            keyExtractor={(item) => item.sender + item.message}
+          />
         </View>
       </View>
 

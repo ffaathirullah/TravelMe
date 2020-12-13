@@ -24,8 +24,6 @@ const ItemRender = ({item, firebase, navigation}) => {
 
   const itemDate = new Date(item.date);
 
-  console.log('item', item);
-
   const historyDate = renderDate(itemDate);
 
   useEffect(() => {

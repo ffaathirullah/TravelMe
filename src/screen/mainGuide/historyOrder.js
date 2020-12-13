@@ -25,8 +25,6 @@ const ItemRender = ({item, firebase}) => {
 
   const historyDate = renderDate(itemDate);
 
-  console.log(placeInfo);
-
   useEffect(() => {
     firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
     firebase

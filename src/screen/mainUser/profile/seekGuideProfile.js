@@ -17,6 +17,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import authFirebase from '@react-native-firebase/auth';
 import {withFirebase} from '../../../config/firebase/firebaseContext';
+import StarRating from 'react-native-star-rating';
 
 const {width, height} = Dimensions.get('window');
 
@@ -50,12 +51,60 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
   );
 };
 
+const RateCard = ({item, firebase}) => {
+  const [senderInfo, setSenderInfo] = useState({});
+
+  useEffect(() => {
+    firebase.doGetCurrentUserInfo(item.sender).then((a) => setSenderInfo(a));
+  }, []);
+
+  return (
+    <View
+      style={{
+        left: 0,
+        right: 0,
+        backgroundColor: '#fff',
+        paddingHorizontal: 7,
+        paddingVertical: 15,
+        elevation: 3,
+        marginVertical: 5,
+        borderRadius: 10,
+      }}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Text style={{fontWeight: 'bold', fontSize: 16}}>
+          {senderInfo.name}
+        </Text>
+        <Text>20/10/2020</Text>
+      </View>
+      <StarRating
+        disabled={true}
+        starSize={18}
+        containerStyle={{width: 120}}
+        maxStars={5}
+        rating={item.rate}
+        fullStarColor={'#fa2'}
+      />
+      <Gap height={15} />
+      <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
+        {item.message}
+      </Text>
+    </View>
+  );
+};
+
 function seekGuideProfile({navigation, firebase, route}) {
   const {data} = route.params;
   const [workPlace, setWorkPlace] = useState([]);
+  const [reviewGuide, setReviewGuide] = useState([{}]);
+  const getArrayRate = (reviewGuide && reviewGuide.map((a) => a.rate)) || [
+    0,
+    0,
+  ];
+  const getRateGuide = getArrayRate && getArrayRate.reduce((a, b) => a + b, 0);
 
   useEffect(() => {
     firebase.doGuideGetPlaceWork(data.id).then((a) => setWorkPlace(a));
+    firebase.doGuideGetReview(data.id).then((a) => setReviewGuide(a));
   }, []);
 
   return (
@@ -107,9 +156,17 @@ function seekGuideProfile({navigation, firebase, route}) {
         <Text style={{fontSize: 14}}>{data.contact} </Text>
         <Gap height={7} />
         <Text>Rating User</Text>
+        <StarRating
+          disabled={true}
+          starSize={25}
+          containerStyle={{width: 140}}
+          maxStars={5}
+          rating={getRateGuide}
+          fullStarColor={'#fa2'}
+        />
         <Gap height={7} />
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() =>
               Linking.openURL(
                 `whatsapp://send?text=hello&phone=62${data.contact}`,
@@ -125,11 +182,11 @@ function seekGuideProfile({navigation, firebase, route}) {
               paddingHorizontal: 10,
             }}>
             <Text style={{color: '#fff'}}>Pesan</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Gap width={10} />
           <TouchableOpacity
             style={{
-              width: 100,
+              // width: 100,
               backgroundColor: '#2D929A',
               justifyContent: 'center',
               alignItems: 'center',
@@ -172,53 +229,10 @@ function seekGuideProfile({navigation, firebase, route}) {
       <View style={styles.reviewContainer}>
         <Text style={{fontSize: 16, fontWeight: 'bold'}}>Review</Text>
         <Gap height={15} />
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            backgroundColor: '#fff',
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            marginVertical: 5,
-            borderRadius: 10,
-          }}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama pereview
-            </Text>
-            <Text>20/10/2020</Text>
-          </View>
-          <Text>Rating rating</Text>
-          <Gap height={15} />
-          <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
-            Lorem ipsum dolor sit amet.
-          </Text>
-        </View>
-
-        <View
-          style={{
-            left: 0,
-            right: 0,
-            backgroundColor: '#fff',
-            paddingHorizontal: 7,
-            paddingVertical: 15,
-            elevation: 3,
-            borderRadius: 10,
-            marginVertical: 5,
-          }}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
-              Nama pereview 2
-            </Text>
-            <Text>20/10/2020</Text>
-          </View>
-          <Text>Rating rating</Text>
-          <Gap height={15} />
-          <Text style={{letterSpacing: 1, fontSize: 16}} adjustsFontSizeToFit>
-            lorem 20
-          </Text>
-        </View>
+        <FlatList
+          data={reviewGuide}
+          renderItem={({item}) => <RateCard item={item} firebase={firebase} />}
+        />
       </View>
     </ScrollView>
   );

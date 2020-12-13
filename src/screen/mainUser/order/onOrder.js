@@ -25,8 +25,6 @@ const ItemRender = ({item, firebase, index}) => {
     await firebase.doUserOrderToHistoryGuide(myUid, item.otherUid, 'cancel');
   };
 
-  console.log('item', item);
-
   useEffect(() => {
     firebase
       .doGetPlaceDetail(item.prov, item.city, item.placeUID)
@@ -84,7 +82,7 @@ const ItemRender = ({item, firebase, index}) => {
           alignSelf: 'center',
           alignItems: 'center',
         }}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               `whatsapp://send?text=hello&phone=62${guideInfo.contact}`,
@@ -100,7 +98,7 @@ const ItemRender = ({item, firebase, index}) => {
             paddingVertical: 10,
           }}>
           <Text>Pesan</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Gap height={5} />
         <TouchableOpacity
           disabled={requestStatus?.status !== 'request'}

@@ -546,6 +546,27 @@ export default class Firebase {
     }
   };
 
+  doGetPlaceReview = async (prov, city, id) => {
+    try {
+      const data = await this.db
+        .collection('place')
+        .doc(prov)
+        .collection(city)
+        .doc(id)
+        .collection('review')
+        .get();
+
+      const list = [];
+
+      data.forEach((doc) => {
+        list.push(doc.data());
+      });
+      return list;
+    } catch (error) {
+      return [];
+    }
+  };
+
   doListGetLocation = async (prov, city, type) => {
     try {
       const data = await this.db
