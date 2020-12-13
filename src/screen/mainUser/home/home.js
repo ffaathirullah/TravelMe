@@ -93,7 +93,7 @@ const LocationModal = ({
         }}>
         <View
           style={{
-            width: 300,
+            width: 400,
             paddingHorizontal: 20,
             paddingTop: 20,
             paddingVertical: 10,
@@ -218,6 +218,10 @@ export default function home({navigation, props}) {
             </Text>
           </TouchableOpacity>
         </View>
+        <View>
+            <Text style={styles.explore}>Explore Bandung!</Text>
+        </View>
+
         <View styles={styles.search}>
           <TextInput
             placeholder="Cari Tempat Wisata, Cafe, dst"
@@ -273,37 +277,21 @@ export default function home({navigation, props}) {
 
           <View
             style={{
-              height: 130,
+              height: windowHeight * 0.41,
               marginTop: 16,
             }}>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('listDetail')}>
-                <Category
-                  navigation={navigation}
-                  imageUri={require('../../../assets/image/image.jpg')}
-                  name="Air Terjun"
-                />
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginRight: 16, marginLeft: 16}}>
+              <TouchableOpacity  onPress={() => navigation.navigate('Gunung1')} >
+              <Category imageUri={{uri : 'https://firebasestorage.googleapis.com/v0/b/simple-chat-app-c1480.appspot.com/o/tangkuban1.jpg?alt=media&token=06baf0f7-7b61-4521-b1e1-f86bf9cd7e04'}} name="Gunung Tangkupan Perahu"/ >
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Category
-                  imageUri={require('../../../assets/image/image2.jpg')}
-                  name="Gunung"
-                />
+              <TouchableOpacity onPress={() => navigation.navigate('Hutan_Raya1')} style={{ marginLeft: 16}}>
+              <Category imageUri={{uri : 'https://firebasestorage.googleapis.com/v0/b/travelme-aa9a6.appspot.com/o/hutan2.jpg?alt=media&token=c71132fe-bb1e-4473-b90d-ecea369168c0'}} name="Taman Hutan Raya Ir. H. Djuanda"/>
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Category
-                  imageUri={require('../../../assets/image/image.jpg')}
-                  name="Air Terjun"
-                />
+              <TouchableOpacity onPress={() => navigation.navigate('Air_Terjun1')} style={{ marginLeft: 16}}>
+              <Category imageUri={{uri : 'https://firebasestorage.googleapis.com/v0/b/travelme-aa9a6.appspot.com/o/Air_Terjun1.jpg?alt=media&token=d132c250-3d1b-4ac8-8292-e9a893ebe541'}}name="Curug Dago"/>
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Category
-                  imageUri={require('../../../assets/image/image2.jpg')}
-                  name="Gunung"
-                />
+              <TouchableOpacity onPress={() => navigation.navigate('Danau1')} style={{ marginLeft: 16}}>
+              <Category imageUri={{uri : 'https://firebasestorage.googleapis.com/v0/b/travelme-aa9a6.appspot.com/o/danau1.jpg?alt=media&token=31bca51c-1f91-40df-b0ec-dd73912796bc'}} name="Situ Cileunca"/>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -372,4 +360,10 @@ const styles = StyleSheet.create({
     marginTop: windowHeight * 0.02955665024,
     flexWrap: 'wrap',
   },
+  explore: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginTop: windowHeight * 0.02802955665,
+  marginLeft: windowWidth * 0.04533333333
+},
 });

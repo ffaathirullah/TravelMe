@@ -3,26 +3,30 @@ import {
     View,
     Text,
     StyleSheet,
-    Image
+    Image,
+    Dimensions
 } from "react-native";
 
 class Category extends Component {
     render() {
         return (
-            <View style={{ height: 130, width: 130, marginLeft: 20, borderWidth: 0.5, borderColor: '#dddddd' }}>
+            <View style={{ height: windowHeight * 0.35666666666, width: windowWidth * 0.43753246753,  borderWidth: 0.5, borderColor: '#dddddd' , elevation: 3}}>
                 <View style={{ flex: 2 }}>
                     <Image source={this.props.imageUri}
                         style={{ flex: 1, width: null, height: null, resizeMode: 'cover' }}
                     />
                 </View>
-                <View style={{ flex: 1, paddingLeft: 10, paddingTop: 10 }}>
-                    <Text>{this.props.name}</Text>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{textAlign: 'center'}}>{this.props.name}</Text>
                 </View>
             </View>
         );
     }
 }
 export default Category;
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
