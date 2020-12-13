@@ -20,6 +20,11 @@ import listGuide from '../../screen/mainUser/list/listGuide';
 import seekGuideProfile from '../../screen/mainUser/profile/seekGuideProfile';
 import reviewServices from '../../screen/mainUser/order/reviewServices';
 
+import Air_Terjun1 from '../../screen/mainUser/listRekomendasi/Air_Terjun1';
+import Danau1 from '../../screen/mainUser/listRekomendasi/Danau1';
+import Gunung1 from '../../screen/mainUser/listRekomendasi/Gunung1';
+import Hutan_Raya1 from '../../screen/mainUser/listRekomendasi/Hutan_Raya1';
+
 const Stack = createStackNavigator();
 function index({firebase}) {
   const myRole = useSelector((state) => state.authReducer.type);
@@ -39,6 +44,10 @@ function index({firebase}) {
             <Stack.Screen name="listDetail" component={listDetail} />
             <Stack.Screen name="listGuide" component={listGuide} />
             <Stack.Screen name="setting" component={settingScreen} />
+            <Stack.Screen name="Air_Terjun1" component={Air_Terjun1} />
+            <Stack.Screen name="Danau1" component={Danau1} />
+            <Stack.Screen name="Gunung1" component={Gunung1} />
+            <Stack.Screen name="Hutan_Raya1" component={Hutan_Raya1} />
             <Stack.Screen
               name="seekGuideProfile"
               component={seekGuideProfile}
