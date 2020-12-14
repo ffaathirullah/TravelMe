@@ -32,9 +32,10 @@ const ItemRender = ({item, firebase, index}) => {
 
     firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
 
-    const subscribe = subscribePath.onSnapshot((doc) =>
-      setRequestStatus(doc.data()),
-    );
+    const subscribe = subscribePath.onSnapshot((doc) => {
+      setRequestStatus(doc.data());
+      console.log(doc.data());
+    });
 
     return () => {
       subscribe;

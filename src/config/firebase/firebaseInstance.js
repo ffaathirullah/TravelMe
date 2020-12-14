@@ -627,4 +627,10 @@ export default class Firebase {
       return [];
     }
   };
+
+  doGetRecomendationPlace = async (prov, city) => {
+    try {
+      const data = await this.db.collection('place');
+    } catch (error) {}
+  };
 }

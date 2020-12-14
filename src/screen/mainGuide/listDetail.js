@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Linking,
   Platform,
   Alert,
+  FlatList,
 } from 'react-native';
 import {Gap} from '../../components';
 import MapView, {Marker} from 'react-native-maps';
@@ -17,10 +18,59 @@ import {withFirebase} from '../../config/firebase/firebaseContext';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import authFirebase from '@react-native-firebase/auth';
+import FAicon from 'react-native-vector-icons/FontAwesome';
+import StarRating from 'react-native-star-rating';
 
 const {height, width} = Dimensions.get('window');
 
+const ReviewCard = ({item, firebase}) => {
+  const [senderInfo, setSenderInfo] = useState({});
+
+  useEffect(() => {
+    firebase.doGetCurrentUserInfo(item.sender).then((a) => setSenderInfo(a));
+  }, []);
+
+  return (
+    <View style={{marginVertical: 8}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          elevation: 3,
+          backgroundColor: '#fff',
+          height: 80,
+          paddingVertical: 10,
+          borderRadius: 10,
+        }}>
+        <Image
+          source={require('../../assets/png/userDefault.png')}
+          style={{
+            height: 40,
+            width: 40,
+            resizeMode: 'cover',
+            borderRadius: 20,
+            marginHorizontal: 10,
+          }}
+        />
+        <View>
+          <Text>{senderInfo.name}</Text>
+          <StarRating
+            disabled={true}
+            starSize={18}
+            containerStyle={{width: 140}}
+            maxStars={5}
+            rating={item.rate}
+            fullStarColor={'#fa2'}
+          />
+          <Text>{item.message}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 function listDetail({route, navigation, firebase}) {
+  const [reviewData, setReviewData] = useState([]);
   const {data, id} = route.params;
   const myUid = authFirebase().currentUser?.uid;
 
@@ -51,6 +101,12 @@ function listDetail({route, navigation, firebase}) {
     Linking.openURL(url);
   };
 
+  useEffect(() => {
+    firebase
+      .doGetPlaceReview(data.prov, data.city, data.id)
+      .then((a) => setReviewData(a));
+  }, []);
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -60,10 +116,7 @@ function listDetail({route, navigation, firebase}) {
       style={{backgroundColor: 'white'}}>
       <View>
         <View>
-          <Image
-            source={require('../../assets/png/dummyPemandangan.png')}
-            style={{height: 350, width}}
-          />
+          <Image source={{uri: data.photo[0]}} style={{height: 350, width}} />
           <View style={styles.optionContainer}>
             <TouchableOpacity
               style={{
@@ -133,39 +186,14 @@ function listDetail({route, navigation, firebase}) {
         <Gap height={15} />
         <View style={{marginHorizontal: 16}}>
           <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-            ulasan(10 orang)
+            ulasan({reviewData.length} orang)
           </Text>
-          {[...Array(4)].map((item, idx) => (
-            <View key={idx}>
-              <Gap height={8} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  elevation: 3,
-                  backgroundColor: '#fff',
-                  height: 80,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../../assets/png/userDefault.png')}
-                  style={{
-                    height: 40,
-                    width: 40,
-                    resizeMode: 'cover',
-                    borderRadius: 20,
-                    marginHorizontal: 10,
-                  }}
-                />
-                <View>
-                  <Text>nama review</Text>
-                  <Text>rating</Text>
-                  <Text>pesan</Text>
-                </View>
-              </View>
-            </View>
-          ))}
+          <FlatList
+            data={reviewData}
+            renderItem={({item}) => (
+              <ReviewCard item={item} firebase={firebase} />
+            )}
+          />
         </View>
       </View>
 

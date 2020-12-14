@@ -39,7 +39,7 @@ function addDestination({firebase, navigation}) {
   const [Title, setTitle] = useState(null);
   const [Descr, setDescr] = useState(null);
   const [Photo, setPhoto] = useState([]);
-  const [Price, setPrice] = useState(0);
+  const [Price, setPrice] = useState('');
   const [date, setDate] = useState(new Date(1598051730000));
   const [dateEnd, setDateEnd] = useState(new Date(1598051730000));
   const [show, setShow] = useState(false);

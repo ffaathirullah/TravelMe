@@ -23,6 +23,7 @@ import {
 import {BottomIcon, Category, Picker, Gap} from '../../../components';
 import ProvList from '../../../utils/provList.json';
 import auth from '@react-native-firebase/auth';
+import {notifMan} from '../../../config/notification/notificationManager.js';
 
 import NavIcon from '../../../utils/navIcon';
 

@@ -10,6 +10,7 @@ import fireStore from '@react-native-firebase/firestore';
 import authFirebase from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux';
 import {withFirebase} from '../firebase/firebaseContext';
+import {notifMan} from '../notification/notificationManager';
 
 const MainUser = createBottomTabNavigator();
 
@@ -45,6 +46,7 @@ function mainUser({firebase, navigation}) {
 
         if (change.type === 'removed') {
           dispatch({type: 'DELETEMYREQUEST', payload: change.doc.data()});
+          console.log(change.doc.data());
         }
       });
     });

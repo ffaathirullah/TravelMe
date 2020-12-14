@@ -14,12 +14,13 @@ import {Gap} from '../../components';
 import {withFirebase} from '../../config/firebase/firebaseContext';
 
 const ItemDestination = ({item, navigation}) => {
+  console.log(item);
   return (
     <TouchableOpacity
       onPress={() => navigation.push('detail', {data: item, id: item.id})}
       style={styles.itemListContainer}>
       <Image
-        source={require('../../assets/png/dummyPemandangan.png')}
+        source={{uri: item.photo[0]}}
         style={{
           height: 80,
           width: 80,

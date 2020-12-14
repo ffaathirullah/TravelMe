@@ -153,8 +153,6 @@ function seekGuideProfile({navigation, firebase, route}) {
         <Gap height={10} />
         <Text style={{fontWeight: 'bold', fontSize: 16}}>{data.name}</Text>
         <Gap height={7} />
-        <Text style={{fontSize: 14}}>{data.contact} </Text>
-        <Gap height={7} />
         <Text>Rating User</Text>
         <StarRating
           disabled={true}

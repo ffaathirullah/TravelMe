@@ -34,9 +34,6 @@ const ReviewCard = ({item, firebase}) => {
     firebase.doGetCurrentUserInfo(item.sender).then((a) => setSenderInfo(a));
   }, []);
 
-  console.log('senderInfo', senderInfo);
-  console.log('item', item);
-
   return (
     <View style={{marginVertical: 8}}>
       <View
@@ -191,7 +188,7 @@ function listDetail({route, firebase, navigation}) {
         <Gap height={15} />
         <View style={{marginHorizontal: 16}}>
           <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-            ulasan(10 orang)
+            ulasan({reviewData.length} orang)
           </Text>
           <FlatList
             data={reviewData}
