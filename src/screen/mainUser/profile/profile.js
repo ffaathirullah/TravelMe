@@ -68,6 +68,14 @@ function profile({navigation, firebase}) {
         <Gap height={9} />
         <Text style={{fontSize: 14}}>{userInfo.contact} </Text>
         <Gap height={9} />
+        <View style={styles.saldoContainer}>
+          <View>
+            <Text>Rp. 888888 </Text>
+          </View>
+          <View style={styles.topUpContainer}>
+            <Text>Top Up</Text>
+          </View>
+        </View>
       </View>
       <Gap height={30} />
 
@@ -179,5 +187,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  saldoContainer: {
+    height: 50,
+    paddingHorizontal: 10,
+    borderWidth: 0.2,
+    borderColor: '#2D929A',
+    borderRadius: 9,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  topUpContainer: {
+    height: 50,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderColor: '#2D929A',
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    borderLeftWidth: 0.2,
+    borderTopStartRadius: 20,
+    borderBottomStartRadius: 20,
   },
 });
