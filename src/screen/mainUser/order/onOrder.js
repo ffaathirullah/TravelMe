@@ -7,13 +7,12 @@ import {withFirebase} from '../../../config/firebase/firebaseContext';
 import fireStore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-const ItemRender = ({item, firebase, index}) => {
+const ItemRender = ({item, firebase, index, myUid}) => {
   const [guideInfo, setGuideInfo] = useState({});
   const [requestStatus, setRequestStatus] = useState({});
   const [placeInfo, setPlaceInfo] = useState(null);
 
   const myRequest = useSelector((state) => state.myRequest);
-  const myUid = auth().currentUser.uid;
 
   const subscribePath = fireStore()
     .collection('user')
@@ -26,11 +25,13 @@ const ItemRender = ({item, firebase, index}) => {
   };
 
   useEffect(() => {
-    firebase
+    const step1 = firebase
       .doGetPlaceDetail(item.prov, item.city, item.placeUID)
       .then((a) => setPlaceInfo(a));
 
-    firebase.doGetCurrentUserInfo(item.otherUid).then((a) => setGuideInfo(a));
+    const step2 = firebase
+      .doGetCurrentUserInfo(item.otherUid)
+      .then((a) => setGuideInfo(a));
 
     const subscribe = subscribePath.onSnapshot((doc) => {
       setRequestStatus(doc.data());
@@ -38,24 +39,14 @@ const ItemRender = ({item, firebase, index}) => {
     });
 
     return () => {
+      step1;
+      step2;
       subscribe;
     };
   }, []);
 
   return (
-    <View
-      style={{
-        backgroundColor: '#fff',
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        marginVertical: 10,
-        left: 0,
-        right: 0,
-        borderColor: '#000',
-        borderWidth: 0.2,
-        borderRadius: 10,
-        flexDirection: 'row',
-      }}>
+    <View style={styles.itemOrderContainer}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
           source={{uri: guideInfo?.profileImage}}
@@ -83,23 +74,6 @@ const ItemRender = ({item, firebase, index}) => {
           alignSelf: 'center',
           alignItems: 'center',
         }}>
-        {/* <TouchableOpacity
-          onPress={() =>
-            Linking.openURL(
-              `whatsapp://send?text=hello&phone=62${guideInfo.contact}`,
-            )
-          }
-          style={{
-            height: 30,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#2D929A',
-            borderRadius: 7,
-            paddingHorizontal: 10,
-            paddingVertical: 10,
-          }}>
-          <Text>Pesan</Text>
-        </TouchableOpacity> */}
         <Gap height={5} />
         <TouchableOpacity
           disabled={requestStatus?.status !== 'request'}
@@ -123,6 +97,43 @@ const ItemRender = ({item, firebase, index}) => {
 
 function onOrder({firebase}) {
   const myRequest = useSelector((state) => state.myRequest);
+  const [myListOrder, setMyListOrder] = useState([]);
+
+  const myUid = auth().currentUser.uid;
+
+  const pathReq = fireStore()
+    .collection('user')
+    .doc(myUid)
+    .collection('myRequest');
+
+  useEffect(() => {
+    const subscrib = pathReq.onSnapshot((querySnap) => {
+      querySnap.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          setMyListOrder((prevData) => [...prevData, change.doc.data()]);
+        }
+
+        if (change.type === 'modified') {
+          setMyListOrder((prevData) => {
+            const getIndex = prevData
+              .map((id) => id.otherUid)
+              .indexOf(change.doc.data().otherUid);
+            prevData[getIndex] = change.doc.data();
+
+            return prevData;
+          });
+        }
+        if (change.type === 'removed') {
+          setMyListOrder((prevData) =>
+            prevData.filter((a) => a.date != change.doc.data().date),
+          );
+        }
+      });
+    });
+    return () => {
+      subscrib;
+    };
+  }, []);
 
   return (
     <View
@@ -133,10 +144,15 @@ function onOrder({firebase}) {
         paddingHorizontal: 20,
       }}>
       <FlatList
-        data={myRequest}
-        keyExtractor={(item) => item.otherUid}
+        data={myListOrder}
+        keyExtractor={(item) => item.date.toString()}
         renderItem={({item, index}) => (
-          <ItemRender item={item} firebase={firebase} index={index} />
+          <ItemRender
+            item={item}
+            firebase={firebase}
+            index={index}
+            myUid={myUid}
+          />
         )}
       />
     </View>
@@ -145,4 +161,17 @@ function onOrder({firebase}) {
 
 export default withFirebase(onOrder);
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  itemOrderContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    left: 0,
+    right: 0,
+    borderColor: '#000',
+    borderWidth: 0.2,
+    borderRadius: 10,
+    flexDirection: 'row',
+  },
+});

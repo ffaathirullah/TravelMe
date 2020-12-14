@@ -4,7 +4,7 @@ import auth, {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import Axios from 'axios';
-import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+
 // import {connect} from 'react-redux';
 
 // import {doAuthLogout} from '../redux/action/authAction';
@@ -424,6 +424,23 @@ export default class Firebase {
     } catch (error) {
       return 'error';
     }
+  };
+
+  doUserGetOrderRequest = async (myUID) => {
+    try {
+      const data = await this.db
+        .collection('user')
+        .doc(myUID)
+        .collection('myRequest')
+        .get();
+      let list = [];
+
+      data.forEach((a) => {
+        list.push({...a.data(), idHistory: a.id});
+      });
+
+      return list;
+    } catch (error) {}
   };
 
   //! ADMIN //! ADMIN //! ADMIN //! ADMIN //! ADMIN

@@ -7,14 +7,14 @@ export default function (state = initialState, action) {
 
     case 'DELETEMYREQUEST':
       const getFilter = state.filter(
-        (a) => a.uidGuide != action.payload.uidGuide,
+        (a) => a.otherUid != action.payload.otherUid,
       );
       return getFilter;
 
     case 'MODIFIEDMYREQUEST':
       const getIndex = state
-        .map((id) => id.uidGuide)
-        .indexOf(action.payload.uidGuide);
+        .map((id) => id.otherUid)
+        .indexOf(action.payload.otherUid);
       state[getIndex] = action.payload;
 
       return state;

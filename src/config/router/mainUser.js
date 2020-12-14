@@ -29,24 +29,24 @@ function mainUser({firebase, navigation}) {
       querySnapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           dispatch({type: 'ADDMYREQUEST', payload: change.doc.data()});
+          console.log('error');
         }
         if (change.type === 'modified') {
           dispatch({type: 'MODIFIEDMYREQUEST', payload: change.doc.data()});
-          if (
-            change.doc.data().status == 'rejected' ||
-            change.doc.data().status == 'canceled'
-          ) {
-            firebase.doUserOrderHistoryGuide(
-              myUid,
-              change.doc.id,
-              change.doc.data().status,
-            );
-          }
+          // if (
+          //   change.doc.data().status == 'rejected' ||
+          //   change.doc.data().status == 'canceled'
+          // ) {
+          //   firebase.doUserOrderHistoryGuide(
+          //     myUid,
+          //     change.doc.id,
+          //     change.doc.data().status,
+          //   );
+          // }
         }
 
         if (change.type === 'removed') {
           dispatch({type: 'DELETEMYREQUEST', payload: change.doc.data()});
-          console.log(change.doc.data());
         }
       });
     });

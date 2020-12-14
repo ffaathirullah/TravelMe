@@ -33,7 +33,7 @@ const ItemRender = ({item, firebase, navigation}) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.push('reviewServices', {data: item, guideInfo})}
-      disabled={item.status != 'completed'}
+      disabled={item.status != 'completed' || item.review === true}
       style={styles.cardContainer}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image

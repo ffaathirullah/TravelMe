@@ -12,7 +12,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Gap} from '../../../components/atom';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {withFirebase} from '../../../config/firebase/firebaseContext';
-import {G} from 'react-native-svg';
 
 const {width, height} = Dimensions.get('window');
 

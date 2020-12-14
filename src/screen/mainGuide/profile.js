@@ -19,6 +19,17 @@ import StarRating from 'react-native-star-rating';
 
 const {width, height} = Dimensions.get('window');
 
+const renderDate = (date) => {
+  const minute = date.getMinutes() + 1;
+  const hour = date.getHours() + 1;
+  const theDate = date.getDate();
+  const month = date.getMonth() + 1;
+
+  const format = `${month}/${theDate}/${hour}:${minute}`;
+
+  return format;
+};
+
 const ItemReview = ({item, firebase}) => {
   const [senderInfo, setSenderInfo] = useState({});
 
@@ -103,13 +114,15 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
 };
 
 function profile({navigation, firebase}) {
-  const [myReview, setMyReview] = useState({});
+  const [myReview, setMyReview] = useState([]);
+
+  const getArrayRate = (myReview && myReview.map((a) => a.rate)) || [0, 0];
+  const getRateGuide = getArrayRate && getArrayRate.reduce((a, b) => a + b, 0);
 
   const userInfo = useSelector((state) => state.userInfo);
   const workPlace = useSelector((state) => state.workPlace);
 
   const dispatch = useDispatch();
-
   const myUid = authFirebase().currentUser.uid;
 
   const logoutFunc = async () => {
@@ -169,7 +182,14 @@ function profile({navigation, firebase}) {
         <Gap height={7} />
         <Text style={{fontSize: 14}}>{userInfo.contact} </Text>
         <Gap height={7} />
-        <Text>Rating User</Text>
+        <StarRating
+          disabled={true}
+          starSize={25}
+          containerStyle={{width: 140}}
+          maxStars={5}
+          rating={getRateGuide}
+          fullStarColor={'#fa2'}
+        />
       </View>
       <Gap height={30} />
 
