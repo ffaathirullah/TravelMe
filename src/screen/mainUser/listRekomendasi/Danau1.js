@@ -36,10 +36,6 @@ function Danau1() {
             <Icon_Waktu />
             <Text style={styles.txtWaktu}>07:00 – 18:00 WIB</Text>
           </View>
-          <View style={styles.waktu}>
-            <Icon_Flag />
-            <Text style={styles.txtFlag}>Tersedia Tour Guide</Text>
-          </View>
           <View style={styles.deskripsi}>
             <Text style={styles.txtDeskripsi}>Deskripsi Singkat</Text>
             <Text style={styles.txtDeskripsiLengkap}>
@@ -49,36 +45,6 @@ function Danau1() {
             Jawa Barat. Tidak sedikit yang berkunjung namun suasananya memang membuat
             hati menjadi tenang.
             </Text>
-          </View>
-          <View>
-            <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>
-            <TouchableOpacity style={styles.ulasan}>
-              <Icon_Tambah_ulasan />
-              <Text>Tambah Ulasan</Text>
-            </TouchableOpacity>
-            <View style={styles.hasilUlasan}>
-              <Icon_Bukit
-                style={{
-                  height: 40,
-                  width: 40,
-                }}
-              />
-              <View style={styles.dataUlasan}>
-                <Text>Nino Carl</Text>
-                <Icon_Bintang />
-                <Text>Bagus tempatnya unik, udaranya segar</Text>
-              </View>
-            </View>
-
-            <View style={styles.palingBawah}>
-              <TouchableOpacity style={styles.peta}>
-                <Icon_Peta />
-                <Text style={styles.txtPeta}>Peta</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.jasaTour}>
-                <Text style={styles.txtJasaTour}>Pesan Jasa Tour Guide</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </ScrollView>

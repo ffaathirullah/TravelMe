@@ -36,46 +36,12 @@ function Air_Terjun1() {
             <Icon_Waktu />
             <Text style={styles.txtWaktu}>08:00 – 17:00 WIB</Text>
           </View>
-          <View style={styles.waktu}>
-            <Icon_Flag />
-            <Text style={styles.txtFlag}>Tersedia Tour Guide</Text>
-          </View>
           <View style={styles.deskripsi}>
             <Text style={styles.txtDeskripsi}>Deskripsi Singkat</Text>
             <Text style={styles.txtDeskripsiLengkap}>
               Curug Dago adalah jejak keindahan Bandung pada masa Hindia Belanda.
               Abad ke-20, air terjun setinggi 15 meter ini kesohor akan keindahan alamnya
             </Text>
-          </View>
-          <View>
-            <Text style={styles.txtUlasan}>Ulasan (10 Orang)</Text>
-            <TouchableOpacity style={styles.ulasan}>
-              <Icon_Tambah_ulasan />
-              <Text>Tambah Ulasan</Text>
-            </TouchableOpacity>
-            <View style={styles.hasilUlasan}>
-              <Icon_Bukit
-                style={{
-                  height: 40,
-                  width: 40,
-                }}
-              />
-              <View style={styles.dataUlasan}>
-                <Text>Nino Carl</Text>
-                <Icon_Bintang />
-                <Text>Bagus tempatnya unik, udaranya segar</Text>
-              </View>
-            </View>
-
-            <View style={styles.palingBawah}>
-              <TouchableOpacity style={styles.peta}>
-                <Icon_Peta />
-                <Text style={styles.txtPeta}>Peta</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.jasaTour}>
-                <Text style={styles.txtJasaTour}>Pesan Jasa Tour Guide</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </ScrollView>
