@@ -291,6 +291,20 @@ export default class Firebase {
     } catch (error) {}
   };
 
+  doGuideWithDraw = async (myUID) => {
+    try {
+      await this.db.collection('user').doc(myUID).update({balance: 0});
+    } catch (error) {}
+  };
+  doGuideSetPrice = async (myUID, amount) => {
+    try {
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .update({price: parseInt(amount)});
+    } catch (error) {}
+  };
+
   //! USER //! USER //! USER //! USER //! USER //! USER
   doUserReqGuide = async (myUID, gUID, prov, city, placeUID, date) => {
     try {
@@ -334,6 +348,21 @@ export default class Firebase {
 
   doUserOrderToHistoryGuide = async (myUID, otherUID, status) => {
     try {
+      if (status == 'completed') {
+        const guideInfo = await this.doGetCurrentUserInfo(myUID);
+        const userInfo = await this.doGetCurrentUserInfo(otherUID);
+
+        console.log('userinfo', userInfo);
+        console.log('guideinfo', guideInfo);
+
+        const result = userInfo.balance - guideInfo.price;
+
+        await this.db
+          .collection('user')
+          .doc(otherUID)
+          .update({balance: result});
+      }
+
       const getDataReqUserPerc = await this.db
         .collection('user')
         .doc(myUID)
@@ -375,6 +404,23 @@ export default class Firebase {
         .add({...getDataReqGuidePerc.data(), status: status});
 
       return 'succed';
+    } catch (error) {
+      return 'error';
+    }
+  };
+
+  doUserAddBalanceAccount = async (myUID, amount) => {
+    try {
+      const data = await this.db.collection('user').doc(myUID).get();
+
+      const getBalance = data.data().balance || 0;
+
+      await this.db
+        .collection('user')
+        .doc(myUID)
+        .update({balance: getBalance + parseInt(amount, 10)});
+
+      return 'sukses';
     } catch (error) {
       return 'error';
     }

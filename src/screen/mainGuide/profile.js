@@ -16,6 +16,7 @@ import {withFirebase} from '../../config/firebase/firebaseContext';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import authFirebase from '@react-native-firebase/auth';
 import StarRating from 'react-native-star-rating';
+import {TextInput} from 'react-native-gesture-handler';
 
 const {width, height} = Dimensions.get('window');
 
@@ -114,13 +115,13 @@ const WorkPlaceCard = ({item, prov, city, firebase}) => {
 };
 
 function profile({navigation, firebase}) {
+  const userInfo = useSelector((state) => state.userInfo);
+  const workPlace = useSelector((state) => state.workPlace);
   const [myReview, setMyReview] = useState([]);
+  const [myPrice, setMyPrice] = useState(userInfo.price || 0);
 
   const getArrayRate = (myReview && myReview.map((a) => a.rate)) || [0, 0];
   const getRateGuide = getArrayRate && getArrayRate.reduce((a, b) => a + b, 0);
-
-  const userInfo = useSelector((state) => state.userInfo);
-  const workPlace = useSelector((state) => state.workPlace);
 
   const dispatch = useDispatch();
   const myUid = authFirebase().currentUser.uid;
@@ -151,7 +152,7 @@ function profile({navigation, firebase}) {
       </View>
       <View
         style={{
-          height: 260,
+          paddingVertical: 10,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
@@ -190,6 +191,45 @@ function profile({navigation, firebase}) {
           rating={getRateGuide}
           fullStarColor={'#fa2'}
         />
+        <Gap height={7} />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}>
+          <View style={styles.saldoContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <TextInput
+                onChangeText={(a) => setMyPrice(a)}
+                value={myPrice}
+                placeholder={myPrice.toString()}
+              />
+              <Text>/Jam </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.topUpContainer}
+              onPress={() => firebase.doGuideSetPrice(userInfo.id, myPrice)}>
+              <Text>Set price</Text>
+            </TouchableOpacity>
+          </View>
+          <Gap width={7} />
+          <View style={styles.saldoContainer}>
+            <View>
+              <Text>Rp. {userInfo.balance || 0} </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.topUpContainer}
+              onPress={() => firebase.doGuideWithDraw(userInfo.id)}>
+              <Text>Withdraw</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
       <Gap height={30} />
 
@@ -246,6 +286,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   reviewContainer: {paddingHorizontal: 20},
+  saldoContainer: {
+    height: 50,
+    paddingHorizontal: 10,
+    borderWidth: 0.2,
+    borderColor: '#2D929A',
+    borderRadius: 9,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
   settingContainer: {
     position: 'absolute',
     top: 10,
@@ -255,6 +306,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  topUpContainer: {
+    height: 50,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderColor: '#2D929A',
+    borderTopWidth: 0.4,
+    borderBottomWidth: 0.4,
+    borderLeftWidth: 0.2,
+    borderTopStartRadius: 20,
+    borderBottomStartRadius: 20,
   },
   workPlaceCardContainer: {
     backgroundColor: '#fff',

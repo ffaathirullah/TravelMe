@@ -102,6 +102,14 @@ function seekGuideProfile({navigation, firebase, route}) {
   ];
   const getRateGuide = getArrayRate && getArrayRate.reduce((a, b) => a + b, 0);
 
+  const userInfo = useSelector((state) => state.userInfo);
+
+  const userBalance = userInfo.balance || 0;
+  const dataPrice = data?.price || 0;
+
+  console.log('price', dataPrice);
+  console.log('balance', userBalance);
+
   useEffect(() => {
     firebase.doGuideGetPlaceWork(data.id).then((a) => setWorkPlace(a));
     firebase.doGuideGetReview(data.id).then((a) => setReviewGuide(a));
@@ -154,6 +162,10 @@ function seekGuideProfile({navigation, firebase, route}) {
         <Text style={{fontWeight: 'bold', fontSize: 16}}>{data.name}</Text>
         <Gap height={7} />
         <Text>Rating User</Text>
+        <Gap height={7} />
+        <Text>Rp. {dataPrice}/Jam</Text>
+        <Gap height={7} />
+
         <StarRating
           disabled={true}
           starSize={25}
@@ -164,38 +176,37 @@ function seekGuideProfile({navigation, firebase, route}) {
         />
         <Gap height={7} />
         <View style={{flexDirection: 'row'}}>
-          {/* <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
-                `whatsapp://send?text=hello&phone=62${data.contact}`,
-              )
-            }
-            style={{
-              width: 100,
-              backgroundColor: '#0D92fA',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 10,
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-            }}>
-            <Text style={{color: '#fff'}}>Pesan</Text>
-          </TouchableOpacity> */}
           <Gap width={10} />
-          <TouchableOpacity
-            style={{
-              // width: 100,
-              backgroundColor: '#2D929A',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 10,
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-            }}>
-            <Text style={{textAlign: 'center', color: '#fff'}}>
-              Kirim permintaan
-            </Text>
-          </TouchableOpacity>
+
+          {userBalance < dataPrice ? (
+            <View
+              style={{
+                // width: 100,
+                backgroundColor: '#909090',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 10,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+              }}>
+              <Text>Saldo tidak cukup</Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={{
+                // width: 100,
+                backgroundColor: '#2D929A',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 10,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+              }}>
+              <Text style={{textAlign: 'center', color: '#fff'}}>
+                Kirim permintaan
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       <Gap height={30} />

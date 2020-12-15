@@ -15,10 +15,17 @@ import {withFirebase} from '../../../config/firebase/firebaseContext';
 
 import auth from '@react-native-firebase/auth';
 
-const ItemRender = ({item, firebase, navigation, idPlace}) => {
+const ItemRender = ({item, firebase, navigation, idPlace, userInfo}) => {
   const [data, setData] = useState(null);
+  const [myReview, setMyReview] = useState([]);
   const myUid = auth().currentUser.uid;
   const date = new Date().getTime();
+
+  const getArrayRate = (myReview && myReview.map((a) => a.rate)) || [0, 0];
+  const getRateGuide = getArrayRate && getArrayRate.reduce((a, b) => a + b, 0);
+
+  const userBalance = userInfo.balance || 0;
+  const dataPrice = data?.price || 0;
 
   const myRequest = useSelector((state) => state.myRequest);
   const areaDestReducer = useSelector((state) => state.areaDestReducer);
@@ -28,6 +35,7 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
 
   useEffect(() => {
     firebase.doGetCurrentUserInfo(item.uid).then((a) => setData(a));
+    firebase.doGuideGetReview(item.uid).then((a) => setMyReview(a));
   }, []);
 
   return (
@@ -53,36 +61,57 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
           <StarRating
             disabled={true}
             maxStars={5}
-            rating={data?.rating || 0}
+            rating={getRateGuide || 0}
             starSize={20}
             fullStarColor={'#ffa000'}
           />
+          <Gap height={7} />
+          <Text>{dataPrice}/Jam</Text>
         </View>
       </View>
       <View style={{alignSelf: 'center', position: 'absolute', right: 10}}>
-        <TouchableOpacity
-          onPress={() =>
-            firebase.doUserReqGuide(
-              myUid,
-              data.id,
-              areaDestReducer.prov,
-              areaDestReducer.city,
-              idPlace,
-              date,
-            )
-          }
-          disabled={alreadyReq}
-          style={{
-            width: 100,
-            backgroundColor: alreadyReq ? '#909090' : '#2D929A',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 10,
-          }}>
-          <Text numberOfLines={2} style={{textAlign: 'center', color: '#fff'}}>
-            {alreadyReq ? 'Permintaan Terkirim' : 'Kirim Permintaan'}
-          </Text>
-        </TouchableOpacity>
+        {userBalance < dataPrice ? (
+          <View
+            style={{
+              width: 100,
+              backgroundColor: '#909090',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 10,
+            }}>
+            <Text
+              numberOfLines={2}
+              style={{textAlign: 'center', color: '#fff'}}>
+              Saldo tidak cukup
+            </Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={() =>
+              firebase.doUserReqGuide(
+                myUid,
+                data.id,
+                areaDestReducer.prov,
+                areaDestReducer.city,
+                idPlace,
+                date,
+              )
+            }
+            disabled={alreadyReq}
+            style={{
+              width: 100,
+              backgroundColor: alreadyReq ? '#909090' : '#2D929A',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 10,
+            }}>
+            <Text
+              numberOfLines={2}
+              style={{textAlign: 'center', color: '#fff'}}>
+              {alreadyReq ? 'Permintaan Terkirim' : 'Kirim Permintaan'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -90,6 +119,8 @@ const ItemRender = ({item, firebase, navigation, idPlace}) => {
 
 function listGuide({route, firebase, navigation}) {
   const {data, idPlace} = route.params;
+
+  const userInfo = useSelector((state) => state.userInfo);
 
   return (
     <View
@@ -108,6 +139,7 @@ function listGuide({route, firebase, navigation}) {
         data={data}
         renderItem={({item}) => (
           <ItemRender
+            userInfo={userInfo}
             item={item}
             idPlace={idPlace}
             firebase={firebase}

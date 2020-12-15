@@ -70,11 +70,13 @@ function profile({navigation, firebase}) {
         <Gap height={9} />
         <View style={styles.saldoContainer}>
           <View>
-            <Text>Rp. 888888 </Text>
+            <Text>Rp. {userInfo.balance || 0} </Text>
           </View>
-          <View style={styles.topUpContainer}>
+          <TouchableOpacity
+            style={styles.topUpContainer}
+            onPress={() => navigation.push('topUp', {myUid: userInfo.id})}>
             <Text>Top Up</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <Gap height={30} />
